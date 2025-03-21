@@ -161,14 +161,16 @@
                 return 'red';
             };
 
-            const color1 = setColor(value1, 3000);
-            const color2 = setColor(value2, 1000);
+            const color1 = setColor(value1, 2240);
+            const color2 = setColor(value2, 800);
 
             div1.style.borderColor = color1;
-            div2.style.borderColor = color2;
             val1.style.backgroundColor = color1;
+
+            div2.style.borderColor = color2;
             val2.style.backgroundColor = color2;
         }
+
 
 
 setInterval(refreshValuesOnly, 10000); // Refresca solo los valores cada 10 segundos
