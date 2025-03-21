@@ -64,26 +64,25 @@ public class ImageCounterController {
         }
     }
 
-    // Actualizar contadores como admin (POST)
     @PostMapping("/admin/update")
-    public String updateCountersFromAdmin(@RequestParam int counter1,
-                                          @RequestParam int counter2,
-                                          HttpSession session,
-                                          Model model) {
-        Boolean isAdmin = (Boolean) session.getAttribute("admin");
-        if (isAdmin == null || !isAdmin) {
-            return "redirect:/admin";
+        @ResponseBody
+        public String updateCountersAdmin(@RequestParam("value1") int newValue1,
+                                        @RequestParam("value2") int newValue2,
+                                        @RequestParam(required = false, defaultValue = "false") boolean admin,
+                                        HttpSession session) {
+            if (!admin) {
+                return "Unauthorized";
+            }
+            Boolean isAdmin = (Boolean) session.getAttribute("admin");
+            if (isAdmin == null || !isAdmin) {
+                return "Unauthorized";
+            }
+
+            this.counter1 = newValue1;
+            this.counter2 = newValue2;
+            return "success";
         }
 
-        this.counter1 = counter1;
-        this.counter2 = counter2;
-
-        model.addAttribute("loggedIn", true);
-        model.addAttribute("updateSuccess", true);
-        model.addAttribute("counter1", this.counter1);
-        model.addAttribute("counter2", this.counter2);
-        return "admin";
-    }
 
     // Visualización para pantalla grande
     @GetMapping("/display")
