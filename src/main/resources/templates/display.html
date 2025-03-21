@@ -20,7 +20,7 @@
         .overlay {
             background-color: rgba(255, 255, 255, 0.6);
             padding: 40px;
-            width: 90%;
+            width: 95%;
             height: 90vh;
             border-radius: 16px;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
@@ -28,11 +28,25 @@
             overflow-y: auto;
         }
 
+        .display-row {
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 60px;
+        }
+
+        .section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+        }
+
         .image {
-            width: 400px;
+            width: 550px;
             height: auto;
             border-radius: 8px;
-            margin-bottom: 10px;
         }
 
         .value-box {
@@ -43,7 +57,6 @@
             border-radius: 16px;
             padding: 20px 40px;
             display: inline-block;
-            margin-bottom: 40px;
         }
 
         h1 {
@@ -53,6 +66,7 @@
 
         h2 {
             font-size: 36px;
+            margin-bottom: 10px;
         }
 
         @media (max-width: 768px) {
@@ -70,16 +84,36 @@
             .value-box {
                 font-size: 72px;
             }
+
+            .display-row {
+                flex-direction: column;
+            }
         }
     </style>
     <script>
+        function setColor(element, value, max) {
+            const percent = (value / max) * 100;
+            if (value === 0) {
+                element.style.backgroundColor = 'gold';
+                return;
+            }
+            if (percent > 75) element.style.backgroundColor = 'green';
+            else if (percent > 50) element.style.backgroundColor = 'yellow';
+            else if (percent > 25) element.style.backgroundColor = 'orange';
+            else element.style.backgroundColor = 'red';
+        }
+
         function refreshDisplay() {
             fetch('/display/values')
                 .then(res => res.json())
                 .then(data => {
-                    document.getElementById('value1').innerText = data.value1;
-                    document.getElementById('value2').innerText = data.value2;
+                    const v1 = document.getElementById('value1');
+                    const v2 = document.getElementById('value2');
+                    v1.innerText = data.value1;
+                    v2.innerText = data.value2;
                     document.getElementById('villain-image').src = data.image1;
+                    setColor(v1, data.value1, 2240);
+                    setColor(v2, data.value2, 800);
                 });
         }
 
@@ -90,15 +124,17 @@
 <body>
 <div class="overlay">
     <h1>Visualizador LMDT</h1>
-    <div style="text-align: center;">
-        <h2>Villano</h2>
-        <img id="villain-image" th:src="${value1 <= 1600} ? '/images/image1_alt.jpg' : '/images/image1.jpg'" class="image" alt="Villano">
-        <div id="value1" class="value-box" th:text="${value1}">2240</div>
-    </div>
-    <div style="text-align: center;">
-        <h2>Entrenamiento Especializado</h2>
-        <img src="/images/image2.jpg" class="image" alt="Entrenamiento">
-        <div id="value2" class="value-box" th:text="${value2}">800</div>
+    <div class="display-row">
+        <div class="section">
+            <h2>Villano</h2>
+            <img id="villain-image" th:src="${value1 <= 1600} ? '/images/image1_alt.jpg' : '/images/image1.jpg'" class="image" alt="Villano">
+            <div id="value1" class="value-box" th:text="${value1}">2240</div>
+        </div>
+        <div class="section">
+            <h2>Entrenamiento Especializado</h2>
+            <img src="/images/image2.jpg" class="image" alt="Entrenamiento">
+            <div id="value2" class="value-box" th:text="${value2}">800</div>
+        </div>
     </div>
 </div>
 </body>
