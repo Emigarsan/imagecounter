@@ -28,11 +28,10 @@
         }
 
         .image {
-            width: 300px;
-            height: 400px;
+            width: 350px;
+            height: auto;
             border-radius: 8px;
             margin-bottom: 10px;
-            object-fit: cover;
         }
 
         .value-box {
@@ -61,6 +60,18 @@
             transition: background-color 0.2s;
         }
 
+        button[value="10"], button[value="-10"] {
+            background-color: #d35400;
+        }
+
+        button[value="5"], button[value="-5"] {
+            background-color: #f39c12;
+        }
+
+        button[value="1"], button[value="-1"] {
+            background-color: #3498db;
+        }
+
         button:hover {
             background-color: #2980b9;
         }
@@ -69,6 +80,37 @@
         .orange { background-color: #e67e22; }
         .red { background-color: #e74c3c; }
         .gold { background-color: gold; }
+        @media (max-width: 768px) {
+            .overlay {
+                padding: 20px;
+                width: 95%;
+                height: auto;
+            }
+
+            .image {
+                width: 90%;
+                height: auto;
+            }
+
+            .value-box {
+                font-size: 28px;
+                padding: 8px 16px;
+            }
+
+            button {
+                font-size: 18px;
+                padding: 12px 18px;
+                margin: 6px;
+            }
+
+            h1 {
+                font-size: 32px;
+            }
+
+            h2 {
+                font-size: 24px;
+            }
+        }
 </style>
 
     <script>
@@ -109,8 +151,10 @@
 
         function checkVillainImage(value) {
             const img = document.getElementById('villain-image');
-            if (value < 1600) {
+            if (value >= 3000) {
                 img.src = '/images/image1_alt.jpg';
+            } else if (value < 1600) {
+                img.src = '/images/image1_low.jpg';
             } else {
                 img.src = '/images/image1.jpg';
             }
@@ -148,12 +192,12 @@
             <img id="villain-image" src="/images/image1.jpg" class="image" alt="Imagen 1">
             <div id="value1" class="value-box" th:text="${value1}">2240</div>
             <div class="button-group">
-                <button onclick="updateValue(1, -10)">-10</button>
-                <button onclick="updateValue(1, -5)">-5</button>
-                <button onclick="updateValue(1, -1)">-1</button>
-                <button onclick="updateValue(1, 1)">+1</button>
-                <button onclick="updateValue(1, 5)">+5</button>
-                <button onclick="updateValue(1, 10)">+10</button>
+                <button onclick="updateValue(1, -10)" value="-10">-10</button>
+                <button onclick="updateValue(1, -5)" value="-5">-5</button>
+                <button onclick="updateValue(1, -1)" value="-1">-1</button>
+                <button onclick="updateValue(1, 1)" value="1">+1</button>
+                <button onclick="updateValue(1, 5)" value="5">+5</button>
+                <button onclick="updateValue(1, 10)" value="10">+10</button>
             </div>
         </div>
 
@@ -163,12 +207,12 @@
             <img src="/images/image2.jpg" class="image" alt="Imagen 2">
             <div id="value2" class="value-box" th:text="${value2}">800</div>
             <div class="button-group">
-                <button onclick="updateValue(2, -10)">-10</button>
-                <button onclick="updateValue(2, -5)">-5</button>
-                <button onclick="updateValue(2, -1)">-1</button>
-                <button onclick="updateValue(2, 1)">+1</button>
-                <button onclick="updateValue(2, 5)">+5</button>
-                <button onclick="updateValue(2, 10)">+10</button>
+                <button onclick="updateValue(2, -10)" value="-10">-10</button>
+                <button onclick="updateValue(2, -5)" value="-5">-5</button>
+                <button onclick="updateValue(2, -1)" value="-1">-1</button>
+                <button onclick="updateValue(2, 1)" value="1">+1</button>
+                <button onclick="updateValue(2, 5)" value="5">+5</button>
+                <button onclick="updateValue(2, 10)" value="10">+10</button>
             </div>
         </div>
     </div>
