@@ -105,7 +105,6 @@
         }
     </style>
     
-
     <script>
         window.villainLocked = false;
 
@@ -114,9 +113,10 @@
             const current = parseInt(el.innerText);
 
             if (image === 1) {
+                // Verificamos límites: valor entre 0 y 2240, y no se puede subir por encima de 1600 si se está debajo
                 if (current + amount > 2240 || current + amount < 0) return;
-                // Si el valor es menor a 1600, permitir solo incrementos que no lo superen.
                 if (current < 1600 && amount > 0 && current + amount > 1600) return;
+                if (current === 1600 && amount > 0) return;
             }
 
             if (image === 2 && (current + amount < 0 || current + amount > 800)) {
@@ -201,11 +201,9 @@
 
                 if (newVal < 0 || newVal > 2240) {
                     btn.disabled = true;
-                } else if (v1 < 1600 && newVal > 1600) { 
-                    // Si se está por debajo de 1600, solo se permite incrementar hasta 1600.
+                } else if (v1 < 1600 && newVal > 1600) {
                     btn.disabled = true;
-                } else if (v1 === 1600 && val > 0) { 
-                    // Si ya está en 1600, no se permiten incrementos.
+                } else if (v1 === 1600 && val > 0) {
                     btn.disabled = true;
                 } else {
                     btn.disabled = false;
@@ -217,10 +215,69 @@
                 const newVal = v2 + val;
                 btn.disabled = newVal < 0 || newVal > 800;
             });
-}
+        }
+
+        setInterval(() => {
+            refreshValuesOnly();
+        }, 2000);
+    </script>
+</head>
+<body>
+    <div class="overlay">
+        <h1 style="font-size: 48px; font-weight: bold; text-align: center; color: black; text-shadow: 1px 1px 3px rgba(0,0,0,0.3); margin-bottom: 30px;">
+            Operación SHIELD : Código LMDT
+        </h1>
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 40px;">
+            <div style="text-align: center;">
+                <h2 style="font-size: 36px;">Villano</h2>
+                <img id="villain-image" src="/images/image1.jpg" class="image" alt="Imagen 1">
+                <hr id="divider1" style="width: 80%; margin: 16px auto; border: 2px solid #ccc;">
+                <div id="value1" class="value-box" th:text="${value1}">2240</div>
+                <div class="button-group">
+                    <button onclick="updateValue(1, -10)">-10</button>
+                    <button onclick="updateValue(1, -5)">-5</button>
+                    <button onclick="updateValue(1, -1)">-1</button>
+                    <button onclick="updateValue(1, 1)">+1</button>
+                    <button onclick="updateValue(1, 5)">+5</button>
+                    <button onclick="updateValue(1, 10)">+10</button>
+                </div>
+            </div>
+            <div style="text-align: center;">
+                <h2 style="font-size: 36px;">Entrenamiento Especializado</h2>
+                <img src="/images/image2.jpg" class="image" alt="Imagen 2">
+                <hr id="divider2" style="width: 80%; margin: 16px auto; border: 2px solid #ccc;">
+                <div id="value2" class="value-box" th:text="${value2}">800</div>
+                <div class="button-group">
+                    <button onclick="updateValue(2, -10)">-10</button>
+                    <button onclick="updateValue(2, -5)">-5</button>
+                    <button onclick="updateValue(2, -1)">-1</button>
+                    <button onclick="updateValue(2, 1)">+1</button>
+                    <button onclick="updateValue(2, 5)">+5</button>
+                    <button onclick="updateValue(2, 10)">+10</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sección Admin -->
+    <div id="adminSection" style="position: fixed; top: 10px; right: 10px; background: rgba(255,255,255,0.8); padding: 20px; border: 1px solid #ccc; border-radius: 8px;">
+        <h3>Modo Admin</h3>
+        <div id="adminLoginDiv">
+            <input type="password" id="adminPassword" placeholder="Contraseña Admin">
+            <button onclick="adminLogin()">Ingresar</button>
+        </div>
+        <div id="adminControls" style="display: none; margin-top: 10px;">
+            <input type="number" id="manualCounter1" placeholder="Valor Villano" value="2240">
+            <input type="number" id="manualCounter2" placeholder="Valor Entrenamiento" value="800">
+            <button onclick="updateAdminCounters()">Actualizar Valores</button>
+        </div>
+        <div id="adminMessage" style="margin-top: 10px; font-weight: bold;"></div>
+    </div>
+
+    <script>
         function adminLogin() {
             const password = document.getElementById('adminPassword').value;
-            fetch('/admin/login', {
+            fetch('/admin/login?admin=true', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                 body: `password=${password}`
@@ -240,7 +297,7 @@
         function updateAdminCounters() {
             const newCounter1 = parseInt(document.getElementById('manualCounter1').value);
             const newCounter2 = parseInt(document.getElementById('manualCounter2').value);
-            fetch('/admin/update', {
+            fetch('/admin/update?admin=true', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                 body: `counter1=${newCounter1}&counter2=${newCounter2}`
@@ -259,59 +316,6 @@
                 }
             });
         }
-
-
-        setInterval(() => {
-            refreshValuesOnly();
-        }, 2000);
     </script>
-</head>
-<body>
-    <div class="overlay">
-        <h1 style="font-size: 48px; font-weight: bold; text-align: center; color: black; text-shadow: 1px 1px 3px rgba(0,0,0,0.3); margin-bottom: 30px;">Operación SHIELD : Código LMDT</h1>
-        <div style="display: flex; flex-direction: column; align-items: center; gap: 40px;">
-        <div style="text-align: center;"> <h2 style="font-size: 36px;">Villano</h2>
-            <img id="villain-image" src="/images/image1.jpg" class="image" alt="Imagen 1">
-            <hr id="divider1" style="width: 80%; margin: 16px auto; border: 2px solid #ccc;">
-
-            <div id="value1" class="value-box" th:text="${value1}">2240</div>
-            <div class="button-group">
-                <button onclick="updateValue(1, -10)">-10</button>
-                <button onclick="updateValue(1, -5)">-5</button>
-                <button onclick="updateValue(1, -1)">-1</button>
-                <button onclick="updateValue(1, 1)">+1</button>
-                <button onclick="updateValue(1, 5)">+5</button>
-                <button onclick="updateValue(1, 10)">+10</button>
-            </div>
-        </div>
-
-        <div style="text-align: center;"> <h2 style="font-size: 36px;">Entrenamiento Especializado</h2>
-            <img src="/images/image2.jpg" class="image" alt="Imagen 2">
-            <hr id="divider2" style="width: 80%; margin: 16px auto; border: 2px solid #ccc;">
-            <div id="value2" class="value-box" th:text="${value2}">800</div>
-            <div class="button-group">
-                <button onclick="updateValue(2, -10)">-10</button>
-                <button onclick="updateValue(2, -5)">-5</button>
-                <button onclick="updateValue(2, -1)">-1</button>
-                <button onclick="updateValue(2, 1)">+1</button>
-                <button onclick="updateValue(2, 5)">+5</button>
-                <button onclick="updateValue(2, 10)">+10</button>
-            </div>
-        </div>
-    </div>
 </body>
-<div id="adminSection" style="position: fixed; top: 10px; right: 10px; background: rgba(255,255,255,0.8); padding: 20px; border: 1px solid #ccc; border-radius: 8px;">
-    <h3>Modo Admin</h3>
-    <div id="adminLoginDiv">
-        <input type="password" id="adminPassword" placeholder="Contraseña Admin">
-        <button onclick="adminLogin()">Ingresar</button>
-    </div>
-    <div id="adminControls" style="display: none; margin-top: 10px;">
-        <input type="number" id="manualCounter1" placeholder="Valor Villano" value="2240">
-        <input type="number" id="manualCounter2" placeholder="Valor Entrenamiento" value="800">
-        <button onclick="updateAdminCounters()">Actualizar Valores</button>
-    </div>
-    <div id="adminMessage" style="margin-top: 10px; font-weight: bold;"></div>
-</div>
-
 </html>
