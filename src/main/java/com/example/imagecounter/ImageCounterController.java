@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 public class ImageCounterController {
 
-    private int value1 = 0;
-    private int value2 = 0;
+    private int value1 = 2240;
+    private int value2 = 800;
 
     @GetMapping("/")
     public String showImages(Model model) {
