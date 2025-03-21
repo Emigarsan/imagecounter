@@ -19,34 +19,38 @@ public class ImageCounterController {
 
     @PostMapping("/update")
     @ResponseBody
-    public String updateCounter(@RequestParam int image, @RequestParam int amount) {
-        if (image == 1) {
+    public String updateCounter(@RequestParam("counter") int counterId, @RequestParam int amount) {
+        if (counterId == 1) {
             counter1 = Math.max(0, counter1 + amount);
             return String.valueOf(counter1);
-        } else if (image == 2) {
+        } else if (counterId == 2) {
             counter2 = Math.max(0, counter2 + amount);
             return String.valueOf(counter2);
         }
-        return "0"; // valor por defecto si la imagen no es válida
+        return "0"; // valor por defecto si el ID no es válido
     }
 
     @PostMapping("/set")
     @ResponseBody
     public String setCounter(
-            @RequestParam int image,
+            @RequestParam("counter") int counterId,
             @RequestParam int value,
             @RequestParam String key
     ) {
         final String ADMIN_KEY = System.getenv("ADMIN_KEY");
 
+        // Debug: imprimir claves para depuración
+        System.out.println("Clave recibida: " + key);
+        System.out.println("Clave esperada: " + ADMIN_KEY);
+
         if (ADMIN_KEY == null || !ADMIN_KEY.equals(key)) {
             return "ACCESO DENEGADO";
         }
 
-        if (image == 1) {
+        if (counterId == 1) {
             counter1 = value;
             return String.valueOf(counter1);
-        } else if (image == 2) {
+        } else if (counterId == 2) {
             counter2 = value;
             return String.valueOf(counter2);
         }
