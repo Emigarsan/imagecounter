@@ -3,11 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <title>Image Counter</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: url('/images/background.jpg') no-repeat center center fixed;
+            background-size: cover;
+            font-family: sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .overlay {
+            background-color: rgba(255, 255, 255, 0.85);
+            padding: 40px;
+            max-width: 700px;
+            border-radius: 16px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        .image {
+            width: 150px;
+            height: auto;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .value-box {
+            font-size: 36px;
+            font-weight: bold;
+            background-color: #f0f0f0;
+            border: 2px solid #ccc;
+            border-radius: 12px;
+            padding: 10px 20px;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        .button-group {
+            margin-bottom: 30px;
+        }
+
+        button {
+            padding: 10px 14px;
+            margin: 4px;
+            font-size: 14px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            background-color: #3498db;
+            color: white;
+            transition: background-color 0.2s;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+    </style>
+
     <script>
         function updateValue(image, amount) {
             fetch('/update', {
                 method: 'POST',
-                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                 body: `image=${image}&amount=${amount}`
             })
             .then(response => response.text())
@@ -18,20 +79,36 @@
     </script>
 </head>
 <body>
-    <h1>Image Counter</h1>
-    
-    <div>
-        <img src="/images/image1.jpg" width="200" height="200" alt="Image 1">
-        <p id="value1" th:text="${value1}"></p>
-        <button onclick="updateValue(1, -1)">-</button>
-        <button onclick="updateValue(1, 1)">+</button>
-    </div>
-    
-    <div>
-        <img src="/images/image2.jpg" width="200" height="200" alt="Image 2">
-        <p id="value2" th:text="${value2}"></p>
-        <button onclick="updateValue(2, -1)">-</button>
-        <button onclick="updateValue(2, 1)">+</button>
+    <div class="overlay">
+        <h1>Contador de Imágenes</h1>
+
+        <!-- Imagen 1 -->
+        <div>
+            <img src="/images/image1.jpg" class="image" alt="Imagen 1">
+            <div id="value1" class="value-box" th:text="${value1}">0</div>
+            <div class="button-group">
+                <button onclick="updateValue(1, -10)">-10</button>
+                <button onclick="updateValue(1, -5)">-5</button>
+                <button onclick="updateValue(1, -1)">-1</button>
+                <button onclick="updateValue(1, 1)">+1</button>
+                <button onclick="updateValue(1, 5)">+5</button>
+                <button onclick="updateValue(1, 10)">+10</button>
+            </div>
+        </div>
+
+        <!-- Imagen 2 -->
+        <div>
+            <img src="/images/image2.jpg" class="image" alt="Imagen 2">
+            <div id="value2" class="value-box" th:text="${value2}">0</div>
+            <div class="button-group">
+                <button onclick="updateValue(2, -10)">-10</button>
+                <button onclick="updateValue(2, -5)">-5</button>
+                <button onclick="updateValue(2, -1)">-1</button>
+                <button onclick="updateValue(2, 1)">+1</button>
+                <button onclick="updateValue(2, 5)">+5</button>
+                <button onclick="updateValue(2, 10)">+10</button>
+            </div>
+        </div>
     </div>
 </body>
 </html>
