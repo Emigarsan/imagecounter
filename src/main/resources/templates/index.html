@@ -114,9 +114,9 @@
             const current = parseInt(el.innerText);
 
             if (image === 1) {
-                const limit = 1600;
                 if (current + amount > 2240 || current + amount < 0) return;
-                if (window.villainLocked && amount > 0) return;
+                // Si el valor es menor a 1600, permitir solo incrementos que no lo superen.
+                if (current < 1600 && amount > 0 && current + amount > 1600) return;
             }
 
             if (image === 2 && (current + amount < 0 || current + amount > 800)) {
@@ -201,7 +201,11 @@
 
                 if (newVal < 0 || newVal > 2240) {
                     btn.disabled = true;
-                } else if (v1 <= 1600 && val > 0) {
+                } else if (v1 < 1600 && newVal > 1600) { 
+                    // Si se está por debajo de 1600, solo se permite incrementar hasta 1600.
+                    btn.disabled = true;
+                } else if (v1 === 1600 && val > 0) { 
+                    // Si ya está en 1600, no se permiten incrementos.
                     btn.disabled = true;
                 } else {
                     btn.disabled = false;
@@ -213,7 +217,7 @@
                 const newVal = v2 + val;
                 btn.disabled = newVal < 0 || newVal > 800;
             });
-        }
+}
 
         setInterval(() => {
             refreshValuesOnly();
