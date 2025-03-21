@@ -73,7 +73,7 @@
         }
 
         button:hover {
-            background-color: #2980b9;
+            opacity: 0.85;
         }
             .green { background-color: #2ecc71; }
         .yellow { background-color: #f1c40f; }
@@ -115,9 +115,34 @@
 
     <script>
         function updateValue(image, amount) {
+            const valueEl = document.getElementById(`value${image}`);
+            const currentValue = parseInt(valueEl.innerText);
+            const newValue = currentValue + amount;
+            if (newValue < 0) return;
+
             fetch('/update', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `image=${image}&amount=${amount}`
+            })
+            .then(response => response.text())
+            .then(serverValue => {
+                valueEl.innerText = serverValue;
+                const max = image === 1 ? 3000 : 1000;
+                applyProgression(valueEl, parseInt(serverValue), max);
+                if (image === 1) checkVillainImage(parseInt(serverValue));
+            });
+        }
+                body: `image=${image}&amount=${amount}`
+            })
+            .then(response => response.text())
+            .then(serverValue => {
+                valueEl.innerText = serverValue;
+                const max = image === 1 ? 3000 : 1000;
+                applyProgression(valueEl, parseInt(serverValue), max);
+                if (image === 1) checkVillainImage(parseInt(serverValue));
+            });
+        },
                 body: `image=${image}&amount=${amount}`
             })
             .then(response => response.text())
@@ -158,9 +183,6 @@
             } else {
                 img.src = '/images/image1.jpg';
             }
-        } else {
-                img.src = '/images/image1.jpg';
-            }
         }
 
         function applyProgression(element, value, max) {
@@ -185,8 +207,7 @@
 <body>
     <div class="overlay">
         <h1 style="font-size: 48px; font-weight: bold; text-align: center; color: black; text-shadow: 1px 1px 3px rgba(0,0,0,0.3); margin-bottom: 30px;">Operación SHIELD : Código LMDT</h1>
-    <div class="overlay">
-        <!-- Imagen 1: Villano -->
+    <!-- Imagen 1: Villano -->
         <div>
             <h2>Villano</h2>
             <img id="villain-image" src="/images/image1.jpg" class="image" alt="Imagen 1">
