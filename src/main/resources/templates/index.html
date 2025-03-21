@@ -49,16 +49,13 @@
             margin-bottom: 30px;
         }
 
-        button {
-            padding: 20px 28px;
-            margin: 8px;
-            font-size: 24px;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            background-color: #3498db;
-            color: white;
-            transition: background-color 0.2s;
+        button {$1
+            opacity: 1;
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
 
         button:hover {
@@ -110,6 +107,21 @@
 
     <script>
         function updateValue(image, amount) {
+            const el = document.getElementById(`value${image}`);
+            const current = parseInt(el.innerText);
+
+            // Bloqueo si Villano ya bajó de 1600 alguna vez
+            if (image === 1) {
+                if (!window.villainLocked && current < 1600) {
+                    window.villainLocked = true;
+                }
+                if (window.villainLocked && amount > 0) return;
+            }
+
+            const newValue = current + amount;
+            const max = image === 1 ? 2240 : 800;
+            if (newValue < 0 || newValue > max) return;
+
             fetch('/update', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -117,8 +129,10 @@
             })
             .then(response => response.text())
             .then(newValue => {
-                document.getElementById(`value${image}`).innerText = newValue;
+                el.innerText = newValue;
                 if (image === 1) checkVillainImage(parseInt(newValue));
+                updateDividers(parseInt(document.getElementById('value1').innerText), parseInt(document.getElementById('value2').innerText));
+                updateButtonStates();
             });
         }
 
@@ -171,9 +185,25 @@
             val2.style.backgroundColor = color2;
         }
 
+function updateButtonStates() {
+    const v1 = parseInt(document.getElementById('value1').innerText);
+    const v2 = parseInt(document.getElementById('value2').innerText);
 
+    document.querySelectorAll('[onclick^="updateValue(1,"]').forEach(btn => {
+        const val = parseInt(btn.innerText);
+        btn.disabled = v1 + val < 0 || v1 + val > 2240;
+    });
 
-setInterval(refreshValuesOnly, 10000); // Refresca solo los valores cada 10 segundos
+    document.querySelectorAll('[onclick^="updateValue(2,"]').forEach(btn => {
+        const val = parseInt(btn.innerText);
+        btn.disabled = v2 + val < 0 || v2 + val > 800;
+    });
+}
+
+setInterval(() => {
+    refreshValuesOnly();
+    updateButtonStates();
+}, 2000); // Refresca solo los valores cada 10 segundos
     </script>
 </head>
 <body>
