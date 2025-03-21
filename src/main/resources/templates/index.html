@@ -49,8 +49,15 @@
             margin-bottom: 30px;
         }
 
-        button {$1
-            opacity: 1;
+        button {
+            padding: 24px 36px;
+            margin: 10px;
+            font-size: 28px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
         }
 
         button:disabled {
@@ -103,6 +110,21 @@
                 font-size: 24px;
             }
         }
+        button[value="-10"], button[value="10"] {
+            background-color: #e74c3c;
+            color: white;
+        }
+
+        button[value="-5"], button[value="5"] {
+            background-color: #f39c12;
+            color: white;
+        }
+
+        button[value="-1"], button[value="1"] {
+            background-color: #3498db;
+            color: white;
+        }
+
 </style>
 
     <script>
@@ -112,9 +134,9 @@
 
             // Bloqueo si Villano ya bajó de 1600 alguna vez
             if (image === 1) {
-                if (!window.villainLocked && current < 1600) {
-                    window.villainLocked = true;
-                }
+                const limit = 1600;
+                if (current + amount > limit) return;
+            }
                 if (window.villainLocked && amount > 0) return;
             }
 
@@ -191,7 +213,7 @@ function updateButtonStates() {
 
     document.querySelectorAll('[onclick^="updateValue(1,"]').forEach(btn => {
         const val = parseInt(btn.innerText);
-        btn.disabled = v1 + val < 0 || v1 + val > 2240;
+        btn.disabled = v1 + val < 0 || v1 + val > 1600;
     });
 
     document.querySelectorAll('[onclick^="updateValue(2,"]').forEach(btn => {
@@ -203,7 +225,7 @@ function updateButtonStates() {
 setInterval(() => {
     refreshValuesOnly();
     updateButtonStates();
-}, 2000); // Refresca solo los valores cada 10 segundos
+}, 10000); // Refresca solo los valores cada 10 segundos
     </script>
 </head>
 <body>
@@ -216,7 +238,7 @@ setInterval(() => {
 
             <div id="value1" class="value-box" th:text="${value1}">2240</div>
             <div class="button-group">
-                <button onclick="updateValue(1, -10)">-10</button>
+                <button onclick="updateValue($1, $2)" value="$2">-10</button>
                 <button onclick="updateValue(1, -5)">-5</button>
                 <button onclick="updateValue(1, -1)">-1</button>
                 <button onclick="updateValue(1, 1)">+1</button>
