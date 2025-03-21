@@ -73,20 +73,18 @@
         }
     </style>
     <script>
-        setInterval(() => {
-            fetch('/display')
-                .then(res => res.text())
-                .then(html => {
-                    const parser = new DOMParser();
-                    const doc = parser.parseFromString(html, 'text/html');
-                    const v1 = doc.querySelector('[th\\:text="${value1}"]')?.innerText || doc.getElementById('value1')?.innerText;
-                    const v2 = doc.querySelector('[th\\:text="${value2}"]')?.innerText || doc.getElementById('value2')?.innerText;
-                    if (v1 && v2) {
-                        document.querySelector('[th\\:text="${value1}"]').innerText = v1;
-                        document.querySelector('[th\\:text="${value2}"]').innerText = v2;
-                    }
+        function refreshDisplay() {
+            fetch('/display/values')
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById('value1').innerText = data.value1;
+                    document.getElementById('value2').innerText = data.value2;
+                    document.getElementById('villain-image').src = data.image1;
                 });
-        }, 2000);
+        }
+
+        setInterval(refreshDisplay, 2000);
+        window.onload = refreshDisplay;
     </script>
 </head>
 <body>
@@ -94,13 +92,13 @@
     <h1>Visualizador LMDT</h1>
     <div style="text-align: center;">
         <h2>Villano</h2>
-        <img th:src="${value1 <= 1600} ? '/images/image1_alt.jpg' : '/images/image1.jpg'" class="image" alt="Villano">
-        <div class="value-box" th:text="${value1}">2560</div>
+        <img id="villain-image" th:src="${value1 <= 1600} ? '/images/image1_alt.jpg' : '/images/image1.jpg'" class="image" alt="Villano">
+        <div id="value1" class="value-box" th:text="${value1}">2240</div>
     </div>
     <div style="text-align: center;">
         <h2>Entrenamiento Especializado</h2>
         <img src="/images/image2.jpg" class="image" alt="Entrenamiento">
-        <div class="value-box" th:text="${value2}">800</div>
+        <div id="value2" class="value-box" th:text="${value2}">800</div>
     </div>
 </div>
 </body>
