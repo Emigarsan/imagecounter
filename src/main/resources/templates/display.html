@@ -49,6 +49,12 @@
             border-radius: 8px;
         }
 
+        .image-double {
+            width: 1100px;
+            height: auto;
+            border-radius: 8px;
+        }
+
         .value-box {
             font-size: 96px;
             font-weight: bold;
@@ -60,12 +66,12 @@
         }
 
         h1 {
-            font-size: 48px;
-            margin-bottom: 30px;
+            font-size: 64px;
+            margin-bottom: 40px;
         }
 
         h2 {
-            font-size: 36px;
+            font-size: 48px;
             margin-bottom: 10px;
         }
 
@@ -76,7 +82,8 @@
                 height: auto;
             }
 
-            .image {
+            .image,
+            .image-double {
                 width: 100%;
                 height: auto;
             }
@@ -87,6 +94,14 @@
 
             .display-row {
                 flex-direction: column;
+            }
+
+            h1 {
+                font-size: 48px;
+            }
+
+            h2 {
+                font-size: 36px;
             }
         }
     </style>
@@ -112,7 +127,7 @@
                     v1.innerText = data.value1;
                     v2.innerText = data.value2;
                     document.getElementById('villain-image').src = data.image1;
-                    setColor(v1, data.value1, 2240);
+                    setColor(v1, data.value1, 2560);
                     setColor(v2, data.value2, 800);
                 });
         }
@@ -123,16 +138,16 @@
 </head>
 <body>
 <div class="overlay">
-    <h1>Visualizador LMDT</h1>
+    <h1>Operación SHIELD : Código LMDT</h1>
     <div class="display-row">
         <div class="section">
             <h2>Villano</h2>
             <img id="villain-image" th:src="${value1 <= 1600} ? '/images/image1_alt.jpg' : '/images/image1.jpg'" class="image" alt="Villano">
-            <div id="value1" class="value-box" th:text="${value1}">2240</div>
+            <div id="value1" class="value-box" th:text="${value1}">2560</div>
         </div>
         <div class="section">
             <h2>Entrenamiento Especializado</h2>
-            <img src="/images/image2.jpg" class="image" alt="Entrenamiento">
+            <img src="/images/image2.jpg" class="image-double" alt="Entrenamiento">
             <div id="value2" class="value-box" th:text="${value2}">800</div>
         </div>
     </div>
