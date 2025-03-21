@@ -123,11 +123,12 @@
                 return;
             }
 
-            fetch('/update', {
+            fetch('/set', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: `image=${image}&amount=${amount}`
+                body: `image=${image}&value=${value}&key=CLAVE123`
             })
+
             .then(response => response.text())
             .then(newValue => {
                 el.innerText = newValue;
