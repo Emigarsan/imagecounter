@@ -1,3 +1,4 @@
+<!-- display.html con estilo similar a index.html -->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -71,6 +72,22 @@
             }
         }
     </style>
+    <script>
+        setInterval(() => {
+            fetch('/display')
+                .then(res => res.text())
+                .then(html => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const v1 = doc.querySelector('[th\\:text="${value1}"]')?.innerText || doc.getElementById('value1')?.innerText;
+                    const v2 = doc.querySelector('[th\\:text="${value2}"]')?.innerText || doc.getElementById('value2')?.innerText;
+                    if (v1 && v2) {
+                        document.querySelector('[th\\:text="${value1}"]').innerText = v1;
+                        document.querySelector('[th\\:text="${value2}"]').innerText = v2;
+                    }
+                });
+        }, 2000);
+    </script>
 </head>
 <body>
 <div class="overlay">
@@ -78,7 +95,7 @@
     <div style="text-align: center;">
         <h2>Villano</h2>
         <img th:src="${value1 <= 1600} ? '/images/image1_alt.jpg' : '/images/image1.jpg'" class="image" alt="Villano">
-        <div class="value-box" th:text="${value1}">2240</div>
+        <div class="value-box" th:text="${value1}">2560</div>
     </div>
     <div style="text-align: center;">
         <h2>Entrenamiento Especializado</h2>

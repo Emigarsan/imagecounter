@@ -113,8 +113,8 @@
             const current = parseInt(el.innerText);
 
             if (image === 1) {
-                // Verificamos límites: valor entre 0 y 2240, y no se puede subir por encima de 1600 si se está debajo
-                if (current + amount > 2240 || current + amount < 0) return;
+                // Verificamos límites: valor entre 0 y 2560, y no se puede subir por encima de 1600 si se está debajo
+                if (current + amount > 2560 || current + amount < 0) return;
                 if (current < 1600 && amount > 0 && current + amount > 1600) return;
                 if (current === 1600 && amount > 0) return;
             }
@@ -181,7 +181,7 @@
                 return 'red';
             };
 
-            const color1 = setColor(value1, 2240);
+            const color1 = setColor(value1, 2560);
             const color2 = setColor(value2, 800);
 
             div1.style.borderColor = color1;
@@ -199,7 +199,7 @@
                 const val = parseInt(btn.innerText.replace('+', ''));
                 const newVal = v1 + val;
 
-                if (newVal < 0 || newVal > 2240) {
+                if (newVal < 0 || newVal > 2560) {
                     btn.disabled = true;
                 } else if (v1 < 1600 && newVal > 1600) {
                     btn.disabled = true;

@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 public class ImageCounterController {
 
-    private int counter1 = 2240; // Valor inicial villano
+    private int counter1 = 2560; // Valor inicial villano
     private int counter2 = 800;  // Valor inicial entrenamiento
 
     private final String ADMIN_PASSWORD = System.getenv("ADMIN_PASSWORD");
