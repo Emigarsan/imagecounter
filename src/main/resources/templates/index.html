@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Image Counter</title>
+    <script>
+        function updateValue(image, amount) {
+            fetch('/update', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                body: `image=${image}&amount=${amount}`
+            })
+            .then(response => response.text())
+            .then(newValue => {
+                document.getElementById(`value${image}`).innerText = newValue;
+            });
+        }
+    </script>
+</head>
+<body>
+    <h1>Image Counter</h1>
+    
+    <div>
+        <img src="/images/image1.jpg" width="200" height="200" alt="Image 1">
+        <p id="value1" th:text="${value1}"></p>
+        <button onclick="updateValue(1, -1)">-</button>
+        <button onclick="updateValue(1, 1)">+</button>
+    </div>
+    
+    <div>
+        <img src="/images/image2.jpg" width="200" height="200" alt="Image 2">
+        <p id="value2" th:text="${value2}"></p>
+        <button onclick="updateValue(2, -1)">-</button>
+        <button onclick="updateValue(2, 1)">+</button>
+    </div>
+</body>
+</html>
