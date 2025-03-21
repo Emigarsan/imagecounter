@@ -109,6 +109,8 @@
         window.villainLocked = false;
         const urlParams = new URLSearchParams(window.location.search);
         const isAdmin = urlParams.get('admin') === 'true';
+        let adminKey = null;
+
 
         function updateValue(counter, amount) {
             const el = document.getElementById(`value${counter}`);
@@ -144,12 +146,11 @@
         function setAdminValue(counter) {
             const input = document.getElementById(`adminInput${counter}`);
             const value = parseInt(input.value);
-            const key = prompt("Introduce la clave de administrador:");
 
             fetch('/set', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: `counter=${counter}&value=${value}&key=${key}`
+                body: `counter=${counter}&value=${value}&key=${adminKey}`
             })
             .then(response => response.text())
             .then(newVal => {
@@ -159,6 +160,7 @@
                     updateButtonStates();
                 } else {
                     alert("Acceso denegado o error al actualizar valor");
+                    localStorage.removeItem("adminKey"); // limpiar clave si falló
                 }
             });
         }
@@ -240,6 +242,17 @@
 
         window.onload = () => {
             if (isAdmin) {
+                adminKey = localStorage.getItem("adminKey");
+                if (!adminKey) {
+                    adminKey = prompt("Introduce la clave de administrador:");
+                    if (adminKey) {
+                        localStorage.setItem("adminKey", adminKey);
+                    } else {
+                        alert("Modo admin no activado.");
+                        return;
+                    }
+                }
+                // Mostrar los inputs admin
                 document.getElementById('adminInput1').style.display = 'inline-block';
                 document.getElementById('adminBtn1').style.display = 'inline-block';
                 document.getElementById('adminInput2').style.display = 'inline-block';
