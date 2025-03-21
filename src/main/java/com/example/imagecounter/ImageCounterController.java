@@ -79,6 +79,7 @@ public class ImageCounterController {
             return "success";
         }
 
+
     // Visualización para pantalla grande
     @GetMapping("/display")
     public String displayOnly(Model model) {
