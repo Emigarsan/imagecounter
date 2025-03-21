@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Visualizador</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: url('/images/background.jpg') no-repeat center center fixed;
+            background-size: cover;
+            font-family: sans-serif;
+            text-align: center;
+            color: white;
+        }
+
+        .container {
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 40px;
+            min-height: 100vh;
+        }
+
+        h1 {
+            font-size: 64px;
+            margin-bottom: 40px;
+        }
+
+        .section {
+            margin-bottom: 60px;
+        }
+
+        .section img {
+            max-width: 60%;
+            border-radius: 20px;
+            box-shadow: 0 0 20px rgba(255,255,255,0.3);
+        }
+
+        .value {
+            font-size: 120px;
+            font-weight: bold;
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 48px;
+            }
+
+            .value {
+                font-size: 72px;
+            }
+
+            .section img {
+                max-width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Estado Actual</h1>
+
+        <div class="section">
+            <h2>Villano</h2>
+            <img th:src="${value1 <= 1600} ? '/images/image1_alt.jpg' : '/images/image1.jpg'" alt="Villano">
+            <div class="value" th:text="${value1}">2240</div>
+        </div>
+
+        <div class="section">
+            <h2>Entrenamiento Especializado</h2>
+            <img src="/images/image2.jpg" alt="Entrenamiento">
+            <div class="value" th:text="${value2}">800</div>
+        </div>
+    </div>
+</body>
+</html>
