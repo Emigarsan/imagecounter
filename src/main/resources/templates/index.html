@@ -218,6 +218,48 @@
                 btn.disabled = newVal < 0 || newVal > 800;
             });
 }
+        function adminLogin() {
+            const password = document.getElementById('adminPassword').value;
+            fetch('/admin/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `password=${password}`
+            })
+            .then(response => response.text())
+            .then(result => {
+                if (result === "success") {
+                    document.getElementById('adminLoginDiv').style.display = 'none';
+                    document.getElementById('adminControls').style.display = 'block';
+                    document.getElementById('adminMessage').innerText = "Modo admin activado.";
+                } else {
+                    document.getElementById('adminMessage').innerText = "Contraseña incorrecta.";
+                }
+            });
+        }
+
+        function updateAdminCounters() {
+            const newCounter1 = parseInt(document.getElementById('manualCounter1').value);
+            const newCounter2 = parseInt(document.getElementById('manualCounter2').value);
+            fetch('/admin/update', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `counter1=${newCounter1}&counter2=${newCounter2}`
+            })
+            .then(response => response.text())
+            .then(result => {
+                if (result === "success") {
+                    document.getElementById('adminMessage').innerText = "Valores actualizados.";
+                    // Actualizamos los valores en la página
+                    document.getElementById('value1').innerText = newCounter1;
+                    document.getElementById('value2').innerText = newCounter2;
+                    updateDividers(newCounter1, newCounter2);
+                    updateButtonStates();
+                } else {
+                    document.getElementById('adminMessage').innerText = "Error al actualizar.";
+                }
+            });
+        }
+
 
         setInterval(() => {
             refreshValuesOnly();
@@ -258,4 +300,18 @@
         </div>
     </div>
 </body>
+<div id="adminSection" style="position: fixed; top: 10px; right: 10px; background: rgba(255,255,255,0.8); padding: 20px; border: 1px solid #ccc; border-radius: 8px;">
+    <h3>Modo Admin</h3>
+    <div id="adminLoginDiv">
+        <input type="password" id="adminPassword" placeholder="Contraseña Admin">
+        <button onclick="adminLogin()">Ingresar</button>
+    </div>
+    <div id="adminControls" style="display: none; margin-top: 10px;">
+        <input type="number" id="manualCounter1" placeholder="Valor Villano" value="2240">
+        <input type="number" id="manualCounter2" placeholder="Valor Entrenamiento" value="800">
+        <button onclick="updateAdminCounters()">Actualizar Valores</button>
+    </div>
+    <div id="adminMessage" style="margin-top: 10px; font-weight: bold;"></div>
+</div>
+
 </html>
