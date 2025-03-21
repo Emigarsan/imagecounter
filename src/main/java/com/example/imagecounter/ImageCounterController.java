@@ -4,6 +4,9 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import java.util.HashMap;
+import java.util.Map;
+
 
 @Controller
 public class ImageCounterController {
@@ -87,4 +90,14 @@ public class ImageCounterController {
         model.addAttribute("value2", counter2);
         return "display";
     }
+    @GetMapping("/display/values")
+        @ResponseBody
+        public Map<String, Object> getDisplayValues() {
+            Map<String, Object> data = new HashMap<>();
+            data.put("value1", counter1);
+            data.put("value2", counter2);
+            data.put("image1", counter1 <= 1600 ? "/images/image1_alt.jpg" : "/images/image1.jpg");
+            return data;
+        }
+
 }
