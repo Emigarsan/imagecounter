@@ -4,232 +4,138 @@
     <meta charset="UTF-8">
     <title>Image Counter</title>
     <style>
-        @keyframes bounce {
-            0%   { transform: scale(1); }
-            50%  { transform: scale(1.15); }
-            100% { transform: scale(1); }
-        }
-
         body {
             margin: 0;
             padding: 0;
             background: url('/images/background.jpg') no-repeat center center fixed;
             background-size: cover;
             font-family: sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             min-height: 100vh;
         }
 
-        .button-group {
-            margin: 24px 0 48px;
+        .overlay {
+            background-color: rgba(255, 255, 255, 0.85);
+            padding: 40px;
+            max-width: 700px;
+            border-radius: 16px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+            text-align: center;
         }
 
-        .button-group button {
-            padding: 20px 28px;
-            margin: 8px;
-            font-size: 24px;
+        .image {
+            width: 300px;
+            height: auto;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .value-box {
+            font-size: 36px;
+            font-weight: bold;
+            background-color: #f0f0f0;
+            border: 2px solid #ccc;
+            border-radius: 12px;
+            padding: 10px 20px;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        .button-group {
+            margin-bottom: 30px;
+        }
+
+        button {
+            padding: 10px 14px;
+            margin: 4px;
+            font-size: 14px;
             border: none;
-            border-radius: 10px;
+            border-radius: 8px;
             cursor: pointer;
+            background-color: #3498db;
             color: white;
             transition: background-color 0.2s;
         }
 
-        button[value="1"], button[value="-1"] {
-            background-color: #3498db;
-        }
-
-        button[value="5"], button[value="-5"] {
-            background-color: #f39c12;
-        }
-
-        button[value="10"], button[value="-10"] {
-            background-color: #e74c3c;
-        }
-
-        button:disabled {
-            background-color: #bbb;
-            cursor: not-allowed;
+        button:hover {
+            background-color: #2980b9;
         }
     </style>
+
+    <script>
+        function updateValue(image, amount) {
+            fetch('/update', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `image=${image}&amount=${amount}`
+            })
+            .then(response => response.text())
+            .then(newValue => {
+                document.getElementById(`value${image}`).innerText = newValue;
+                if (image === 1) checkVillainImage(parseInt(newValue));
+            });
+        }
+
+        function refreshValuesOnly() {
+            fetch('/')
+                .then(response => response.text())
+                .then(html => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const newValue1 = doc.getElementById('value1').innerText;
+                    const newValue2 = doc.getElementById('value2').innerText;
+                    document.getElementById('value1').innerText = newValue1;
+                    document.getElementById('value2').innerText = newValue2;
+                    checkVillainImage(parseInt(newValue1));
+                });
+        }
+
+        function checkVillainImage(value) {
+            const img = document.getElementById('villain-image');
+            if (value >= 3000) {
+                img.src = '/images/image1_alt.jpg';
+            } else {
+                img.src = '/images/image1.jpg';
+            }
+        }
+
+        setInterval(refreshValuesOnly, 10000); // Refresca solo los valores cada 10 segundos
+    </script>
 </head>
 <body>
-    <div class="overlay" style="background-color: rgba(255, 255, 255, 0.3); padding: 40px; height: 100vh; overflow-y: auto; border-radius: 0; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-        <h1 style="font-size: 48px; font-weight: bold; text-align: center; color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.7); margin-top: 20px;">Operación SHIELD : Código LMDT</h1>
+    <h1 style="font-size: 36px; font-weight: bold; text-align: center; color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.7); margin-top: 20px;">Operación SHIELD : Código LMDT</h1>
+    <div class="overlay">
         <!-- Imagen 1: Villano -->
         <div>
-            <h2 style="font-size: 32px;">Villano</h2>
-            <div class="image-container">
-                <img id="villain-image" src="/images/image1.jpg" class="image" alt="Imagen 1">
-            </div>
+            <h2>Villano</h2>
+            <img id="villain-image" src="/images/image1.jpg" class="image" alt="Imagen 1">
             <div id="value1" class="value-box" th:text="${value1}">2240</div>
             <div class="button-group">
-                <button onclick="updateValue(1, -10)" value="-10">-10</button>
-                <button onclick="updateValue(1, -5)" value="-5">-5</button>
-                <button onclick="updateValue(1, -1)" value="-1">-1</button>
-                <button onclick="updateValue(1, 1)" value="1">+1</button>
-                <button onclick="updateValue(1, 5)" value="5">+5</button>
-                <button onclick="updateValue(1, 10)" value="10">+10</button>
+                <button onclick="updateValue(1, -10)">-10</button>
+                <button onclick="updateValue(1, -5)">-5</button>
+                <button onclick="updateValue(1, -1)">-1</button>
+                <button onclick="updateValue(1, 1)">+1</button>
+                <button onclick="updateValue(1, 5)">+5</button>
+                <button onclick="updateValue(1, 10)">+10</button>
             </div>
         </div>
 
         <!-- Imagen 2: Entrenamiento Especializado -->
         <div>
-            <h2 style="font-size: 32px;">Entrenamiento Especializado</h2>
-            <div class="image-container">
-                <img src="/images/image2.jpg" class="image" alt="Imagen 2">
-            </div>
+            <h2>Entrenamiento Especializado</h2>
+            <img src="/images/image2.jpg" class="image" alt="Imagen 2">
             <div id="value2" class="value-box" th:text="${value2}">800</div>
             <div class="button-group">
-                <button onclick="updateValue(2, -10)" value="-10">-10</button>
-                <button onclick="updateValue(2, -5)" value="-5">-5</button>
-                <button onclick="updateValue(2, -1)" value="-1">-1</button>
-                <button onclick="updateValue(2, 1)" value="1">+1</button>
-                <button onclick="updateValue(2, 5)" value="5">+5</button>
-                <button onclick="updateValue(2, 10)" value="10">+10</button>
+                <button onclick="updateValue(2, -10)">-10</button>
+                <button onclick="updateValue(2, -5)">-5</button>
+                <button onclick="updateValue(2, -1)">-1</button>
+                <button onclick="updateValue(2, 1)">+1</button>
+                <button onclick="updateValue(2, 5)">+5</button>
+                <button onclick="updateValue(2, 10)">+10</button>
             </div>
         </div>
     </div>
-
-<script>
-    function updateValue(image, amount) {
-        const valueEl = document.getElementById(`value${image}`);
-        const currentValue = parseInt(valueEl.innerText);
-        const newValue = currentValue + amount;
-        if (newValue < 0) return;
-
-        fetch('/update', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: `image=${image}&amount=${amount}`
-        })
-        .then(response => response.text())
-        .then(serverValue => {
-            valueEl.innerText = serverValue;
-            valueEl.style.animation = 'bounce 0.4s ease';
-            setTimeout(() => valueEl.style.animation = '', 400);
-            applyColor(valueEl, parseInt(serverValue));
-            updateButtonStates();
-            if (image === 1) checkVillainImage(parseInt(serverValue));
-        });
-    }
-
-    function refreshValuesOnly() {
-        fetch('/')
-            .then(response => response.text())
-            .then(html => {
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(html, 'text/html');
-                const newValue1 = doc.getElementById('value1').innerText;
-                const newValue2 = doc.getElementById('value2').innerText;
-                const val1 = document.getElementById('value1');
-                const val2 = document.getElementById('value2');
-                val1.innerText = newValue1;
-                val1.style.animation = 'bounce 0.4s ease';
-                setTimeout(() => val1.style.animation = '', 400);
-                val2.innerText = newValue2;
-                val2.style.animation = 'bounce 0.4s ease';
-                setTimeout(() => val2.style.animation = '', 400);
-                applyColor(val1, parseInt(newValue1));
-                applyColor(val2, parseInt(newValue2));
-                checkVillainImage(parseInt(newValue1));
-                updateButtonStates();
-            });
-    }
-
-    function applyColor(element, value) {
-        element.style.color = '';
-    } else if (percent > 75) {
-            element.style.color = 'green';
-        } else if (percent > 50) {
-            element.style.color = 'yellow';
-        } else if (percent > 25) {
-            element.style.color = 'orange';
-        } else {
-            element.style.color = 'red';
-        }
-    }
-
-    function checkVillainImage(value) {
-        const img = document.getElementById('villain-image');
-        let newSrc;
-
-        if (value === 0) {
-            launchFireworks();
-        }
-
-        if (value < 1600) {
-            newSrc = '/images/image1_alt.jpg';
-        } else {
-            newSrc = '/images/image1.jpg';
-        }
-
-        if (!img.src.endsWith(newSrc)) {
-            img.style.transition = 'opacity 0.5s';
-            img.style.opacity = 0.2;
-            setTimeout(() => {
-                img.src = newSrc;
-                img.style.opacity = 1;
-            }, 250);
-        }
-    }
-
-        if (value === 0) {
-            launchFireworks();
-        }
-    }
-
-    function updateButtonStates() {
-        const value1 = parseInt(document.getElementById('value1').innerText);
-        const value2 = parseInt(document.getElementById('value2').innerText);
-        const buttons1 = document.querySelectorAll('[onclick^="updateValue(1, -"]');
-        const buttons2 = document.querySelectorAll('[onclick^="updateValue(2, -"]');
-        buttons1.forEach(btn => {
-            const amount = parseInt(btn.innerText);
-            btn.disabled = value1 + amount < 0;
-        });
-        buttons2.forEach(btn => {
-            const amount = parseInt(btn.innerText);
-            btn.disabled = value2 + amount < 0;
-        });
-    }
-
-    setInterval(() => {
-        refreshValuesOnly();
-        updateButtonStates();
-    }, 5000);
-</script>
-<div id="fireworks" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; display: none;"></div>
-<script src="https://cdn.jsdelivr.net/npm/fireworks-js@2.9.2/dist/index.umd.min.js"></script>
-<script>
-    const fireworksContainer = document.getElementById('fireworks');
-    const fireworks = new Fireworks(fireworksContainer, {
-        hue: { min: 0, max: 360 },
-        rocketsPoint: 50,
-        speed: 2,
-        acceleration: 1.05,
-        friction: 0.95,
-        gravity: 1.5,
-        particles: 80,
-        trace: 3,
-        explosion: 5,
-        autoresize: true,
-        brightness: { min: 50, max: 80 },
-        decay: { min: 0.015, max: 0.03 },
-        mouse: { click: false, move: false, max: 1 },
-    });
-
-    function launchFireworks() {
-        const victoryText = document.getElementById('victory-message');
-        fireworksContainer.style.display = 'block';
-        fireworks.start();
-        victoryText.style.display = 'block';
-        setTimeout(() => {
-            fireworks.stop();
-            fireworksContainer.style.display = 'none';
-            victoryText.style.display = 'none';
-        }, 5000);
-    }
-</script>
-<div id="victory-message" style="position: fixed; top: 40%; left: 50%; transform: translate(-50%, -50%); font-size: 64px; font-weight: bold; color: gold; text-shadow: 3px 3px 6px rgba(0,0,0,0.6); z-index: 10000; display: none;">¡VICTORIA!</div>
 </body>
 </html>
