@@ -68,11 +68,7 @@ public class ImageCounterController {
         @ResponseBody
         public String updateCountersAdmin(@RequestParam("value1") int newValue1,
                                         @RequestParam("value2") int newValue2,
-                                        @RequestParam(required = false, defaultValue = "false") boolean admin,
                                         HttpSession session) {
-            if (!admin) {
-                return "Unauthorized";
-            }
             Boolean isAdmin = (Boolean) session.getAttribute("admin");
             if (isAdmin == null || !isAdmin) {
                 return "Unauthorized";
@@ -82,7 +78,6 @@ public class ImageCounterController {
             this.counter2 = newValue2;
             return "success";
         }
-
 
     // Visualización para pantalla grande
     @GetMapping("/display")
