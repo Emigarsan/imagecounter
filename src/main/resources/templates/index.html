@@ -100,19 +100,21 @@
     </style>
 
     <script>
+        window.villainLocked = false;
+
         function updateValue(image, amount) {
             const el = document.getElementById(`value${image}`);
             const current = parseInt(el.innerText);
 
             if (image === 1) {
                 const limit = 1600;
-                if (current + amount > limit) return;
+                if (current + amount > 2240 || current + amount < 0) return;
                 if (window.villainLocked && amount > 0) return;
             }
 
-            const newValue = current + amount;
-            const max = image === 1 ? 2240 : 800;
-            if (newValue < 0 || newValue > max) return;
+            if (image === 2 && (current + amount < 0 || current + amount > 800)) {
+                return;
+            }
 
             fetch('/update', {
                 method: 'POST',
@@ -123,7 +125,10 @@
             .then(newValue => {
                 el.innerText = newValue;
                 if (image === 1) checkVillainImage(parseInt(newValue));
-                updateDividers(parseInt(document.getElementById('value1').innerText), parseInt(document.getElementById('value2').innerText));
+                updateDividers(
+                    parseInt(document.getElementById('value1').innerText),
+                    parseInt(document.getElementById('value2').innerText)
+                );
                 updateButtonStates();
             });
         }
@@ -140,6 +145,7 @@
                     document.getElementById('value2').innerText = newValue2;
                     checkVillainImage(parseInt(newValue1));
                     updateDividers(parseInt(newValue1), parseInt(newValue2));
+                    updateButtonStates();
                 });
         }
 
@@ -147,6 +153,7 @@
             const img = document.getElementById('villain-image');
             if (value <= 1600) {
                 img.src = '/images/image1_alt.jpg';
+                window.villainLocked = true;
             } else {
                 img.src = '/images/image1.jpg';
             }
@@ -182,19 +189,27 @@
             const v2 = parseInt(document.getElementById('value2').innerText);
 
             document.querySelectorAll('[onclick^="updateValue(1,"]').forEach(btn => {
-                const val = parseInt(btn.innerText);
-                btn.disabled = v1 + val < 0 || v1 + val > 1600;
+                const val = parseInt(btn.innerText.replace('+', ''));
+                const newVal = v1 + val;
+
+                if (newVal < 0 || newVal > 2240) {
+                    btn.disabled = true;
+                } else if (v1 <= 1600 && val > 0) {
+                    btn.disabled = true;
+                } else {
+                    btn.disabled = false;
+                }
             });
 
             document.querySelectorAll('[onclick^="updateValue(2,"]').forEach(btn => {
-                const val = parseInt(btn.innerText);
-                btn.disabled = v2 + val < 0 || v2 + val > 800;
+                const val = parseInt(btn.innerText.replace('+', ''));
+                const newVal = v2 + val;
+                btn.disabled = newVal < 0 || newVal > 800;
             });
         }
 
         setInterval(() => {
             refreshValuesOnly();
-            updateButtonStates();
         }, 10000);
     </script>
 </head>
