@@ -147,17 +147,29 @@
         }
 
         function updateDividers(value1, value2) {
-    const div1 = document.getElementById('divider1');
-    const div2 = document.getElementById('divider2');
-    const val1 = document.getElementById('value1');
-    const val2 = document.getElementById('value2');
+            const div1 = document.getElementById('divider1');
+            const div2 = document.getElementById('divider2');
+            const val1 = document.getElementById('value1');
+            const val2 = document.getElementById('value2');
 
-    const setColor = (element, value, max) => {
-        const percent = (value / max) * 100;
-        if (value === 0) {
-            element.style.borderColor = 'gold';
-            element.style.backgroundColor = 'gold';
-        } 
+            const setColor = (value, max) => {
+                const percent = (value / max) * 100;
+                if (value === 0) return 'gold';
+                if (percent > 75) return 'green';
+                if (percent > 50) return 'yellow';
+                if (percent > 25) return 'orange';
+                return 'red';
+            };
+
+    const color1 = setColor(value1, 3000);
+    const color2 = setColor(value2, 1000);
+
+    div1.style.borderColor = color1;
+    div2.style.borderColor = color2;
+    val1.style.backgroundColor = color1;
+    val2.style.backgroundColor = color2;
+}
+
 
 setInterval(refreshValuesOnly, 10000); // Refresca solo los valores cada 10 segundos
     </script>
