@@ -1,3 +1,4 @@
+<!-- admin.html con estilo similar a index.html con popup personalizado -->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -55,9 +56,19 @@
             background-color: #2980b9;
         }
 
-        p {
-            font-size: 18px;
-            margin-top: 10px;
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #2ecc71;
+            color: white;
+            padding: 20px 40px;
+            border-radius: 16px;
+            font-size: 24px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.3);
+            display: none;
+            z-index: 1000;
         }
     </style>
 </head>
@@ -75,14 +86,42 @@
     </div>
 
     <div th:if="${loggedIn}">
-        <form method="post" action="/admin/update">
-            <input type="number" name="value1" placeholder="Valor Villano" th:value="${value1}" required><br>
-            <input type="number" name="value2" placeholder="Valor Entrenamiento" th:value="${value2}" required><br>
-            <button type="submit">Actualizar</button>
-        </form>
-        <p th:if="${updateSuccess}" style="color: green;">¡Valores actualizados!</p>
-        <p th:if="${updateFailed}" style="color: red;">Error al actualizar.</p>
+        <div>
+            <input type="number" id="value1" placeholder="Valor Villano" th:value="${value1}" required><br>
+            <input type="number" id="value2" placeholder="Valor Entrenamiento" th:value="${value2}" required><br>
+            <button onclick="updateValues()">Actualizar</button>
+        </div>
     </div>
 </div>
+
+<div id="successPopup" class="popup">Los valores fueron actualizados</div>
+
+<script>
+    function updateValues() {
+        const v1 = document.getElementById('value1').value;
+        const v2 = document.getElementById('value2').value;
+
+        fetch('/admin/update', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: `value1=${v1}&value2=${v2}`
+        })
+        .then(res => res.text())
+        .then(response => {
+            if (response === 'success') {
+                const popup = document.getElementById('successPopup');
+                popup.style.display = 'block';
+                setTimeout(() => {
+                    popup.style.display = 'none';
+                    location.reload();
+                }, 2000);
+            } else {
+                alert('Error al actualizar los valores');
+            }
+        });
+    }
+</script>
 </body>
-</html>g
+</html>
