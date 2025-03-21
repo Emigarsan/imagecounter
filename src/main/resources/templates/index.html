@@ -133,6 +133,7 @@
                     document.getElementById('value1').innerText = newValue1;
                     document.getElementById('value2').innerText = newValue2;
                     checkVillainImage(parseInt(newValue1));
+                    updateDividers(parseInt(newValue1), parseInt(newValue2));
                 });
         }
 
@@ -145,16 +146,62 @@
             }
         }
 
-        setInterval(refreshValuesOnly, 10000); // Refresca solo los valores cada 10 segundos
+        function updateDividers(value1, value2) {
+    const div1 = document.getElementById('divider1');
+    const div2 = document.getElementById('divider2');
+    const val1 = document.getElementById('value1');
+    const val2 = document.getElementById('value2');
+
+    const setColor = (element, value, max) => {
+        const percent = (value / max) * 100;
+        if (value === 0) {
+            element.style.borderColor = 'gold';
+            element.style.backgroundColor = 'gold';
+        } else if (percent > 75) {
+            element.style.borderColor = 'green';
+            element.style.backgroundColor = 'green';
+        } else if (percent > 50) {
+            element.style.borderColor = 'yellow';
+            element.style.backgroundColor = 'yellow';
+        } else if (percent > 25) {
+            element.style.borderColor = 'orange';
+            element.style.backgroundColor = 'orange';
+        } else {
+            element.style.borderColor = 'red';
+            element.style.backgroundColor = 'red';
+        }
+    };
+
+    setColor(div1, value1, 3000);
+    setColor(val1, value1, 3000);
+    setColor(div2, value2, 1000);
+    setColor(val2, value2, 1000);
+} else if (percent > 75) {
+            element.style.borderColor = 'green';
+        } else if (percent > 50) {
+            element.style.borderColor = 'yellow';
+        } else if (percent > 25) {
+            element.style.borderColor = 'orange';
+        } else {
+            element.style.borderColor = 'red';
+        }
+    };
+
+    setColor(div1, value1, 3000);
+    setColor(div2, value2, 1000);
+}
+
+setInterval(refreshValuesOnly, 10000); // Refresca solo los valores cada 10 segundos
     </script>
 </head>
 <body>
     <div class="overlay">
         <h1 style="font-size: 48px; font-weight: bold; text-align: center; color: black; text-shadow: 1px 1px 3px rgba(0,0,0,0.3); margin-bottom: 30px;">Operación SHIELD : Código LMDT</h1>
-    <div class="overlay">
         <div style="display: flex; flex-direction: column; align-items: center; gap: 40px;">
-        <div style="text-align: center;"> <h2>Villano</h2>
+        <div style="text-align: center;"> <h2 style="font-size: 36px;">Villano</h2>
             <img id="villain-image" src="/images/image1.jpg" class="image" alt="Imagen 1">
+            <hr id="divider1" style="width: 80%; margin: 16px auto; border: 2px solid #ccc;">
+
             <div id="value1" class="value-box" th:text="${value1}">2240</div>
             <div class="button-group">
                 <button onclick="updateValue(1, -10)">-10</button>
@@ -167,8 +214,9 @@
         </div>
 
         <!-- Imagen 2: Entrenamiento Especializado -->
-        <div style="text-align: center;"> <h2>Entrenamiento Especializado</h2>
+        <div style="text-align: center;"> <h2 style="font-size: 36px;">Entrenamiento Especializado</h2>
             <img src="/images/image2.jpg" class="image" alt="Imagen 2">
+            <hr id="divider2" style="width: 80%; margin: 16px auto; border: 2px solid #ccc;">
             <div id="value2" class="value-box" th:text="${value2}">800</div>
             <div class="button-group">
                 <button onclick="updateValue(2, -10)">-10</button>
