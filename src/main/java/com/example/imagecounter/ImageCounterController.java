@@ -1,5 +1,7 @@
 package com.example.imagecounter;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -30,20 +32,22 @@ public class ImageCounterController {
         return "0"; // valor por defecto si el ID no es válido
     }
 
-    @PostMapping("/set")
+    @PostMapping(value = "/set", produces = "text/plain;charset=UTF-8")
     @ResponseBody
     public String setCounter(
             @RequestParam("counter") int counterId,
             @RequestParam int value,
-            @RequestParam String key
+            @RequestParam String key,
+            HttpServletResponse response
     ) {
         final String ADMIN_KEY = System.getenv("ADMIN_KEY");
 
-        // Debug: imprimir claves para depuración
+        // Debug: imprimir las claves para depuración
         System.out.println("Clave recibida: " + key);
         System.out.println("Clave esperada: " + ADMIN_KEY);
 
         if (ADMIN_KEY == null || !ADMIN_KEY.equals(key)) {
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             return "ACCESO DENEGADO";
         }
 
