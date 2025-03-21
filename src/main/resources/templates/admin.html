@@ -1,0 +1,32 @@
+<!-- src/main/resources/templates/admin.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Panel</title>
+</head>
+<body>
+    <h2>Panel de Administración</h2>
+
+    <div th:if="${notLoggedIn}">
+        <form method="post" action="/admin/login">
+            <label for="password">Contraseña:</label>
+            <input type="password" id="password" name="password" required>
+            <button type="submit">Ingresar</button>
+        </form>
+        <p th:if="${loginFailed}" style="color: red;">Contraseña incorrecta.</p>
+    </div>
+
+    <div th:if="${loggedIn}">
+        <form method="post" action="/admin/update">
+            <label>Valor Villano:</label>
+            <input type="number" name="value1" value="${value1}"><br>
+            <label>Valor Entrenamiento:</label>
+            <input type="number" name="value2" value="${value2}"><br>
+            <button type="submit">Actualizar</button>
+        </form>
+        <p th:if="${updateSuccess}" style="color: green;">¡Valores actualizados!</p>
+        <p th:if="${updateFailed}" style="color: red;">Error al actualizar.</p>
+    </div>
+</body>
+</html>
