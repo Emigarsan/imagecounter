@@ -4,41 +4,13 @@
     <meta charset="UTF-8">
     <title>Image Counter</title>
     <style>
+        @keyframes bounce {
+            0%   { transform: scale(1); }
+            50%  { transform: scale(1.15); }
+            100% { transform: scale(1); }
+        }
+
         body {
-            margin: 0;
-            padding: 0;
-            background: url('/images/background.jpg') no-repeat center center fixed;
-            background-size: cover;
-            font-family: sans-serif;
-            min-height: 100vh;
-        }
-
-        .overlay {
-            background-color: rgba(255, 255, 255, 0.3);
-            padding: 40px;
-            height: 100vh;
-            overflow-y: auto;
-            border-radius: 0;
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .image-container {
-            display: inline-block;
-            width: 100%;
-            max-width: 300px;
-        }
-
-        .image {
-            width: 100%;
-            height: auto;
-            border-radius: 8px;
-        }
-
-        .value-box {
             font-size: 56px;
             font-weight: bold;
             background-color: #f0f0f0;
@@ -81,11 +53,10 @@
             cursor: not-allowed;
         }
     </style>
-    <!-- (Scripts permanecen igual, no modificados aquí por claridad) -->
 </head>
 <body>
+    <h1 style="font-size: 48px; font-weight: bold; text-align: center; color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.7); margin-top: 20px;">Operación SHIELD : Código LMDT</h1>
     <div class="overlay">
-        <h1 style="font-size: 48px; font-weight: bold; text-align: center; color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.7); margin-top: 20px;">Operación SHIELD : Código LMDT</h1>
         <!-- Imagen 1: Villano -->
         <div>
             <h2 style="font-size: 32px;">Villano</h2>
@@ -120,6 +91,7 @@
             </div>
         </div>
     </div>
+
 <script>
     function updateValue(image, amount) {
         const valueEl = document.getElementById(`value${image}`);
@@ -135,6 +107,8 @@
         .then(response => response.text())
         .then(serverValue => {
             valueEl.innerText = serverValue;
+            valueEl.style.animation = 'bounce 0.4s ease';
+            setTimeout(() => valueEl.style.animation = '', 400);
             applyColor(valueEl, parseInt(serverValue));
             updateButtonStates();
             if (image === 1) checkVillainImage(parseInt(serverValue));
@@ -152,7 +126,11 @@
                 const val1 = document.getElementById('value1');
                 const val2 = document.getElementById('value2');
                 val1.innerText = newValue1;
+                val1.style.animation = 'bounce 0.4s ease';
+                setTimeout(() => val1.style.animation = '', 400);
                 val2.innerText = newValue2;
+                val2.style.animation = 'bounce 0.4s ease';
+                setTimeout(() => val2.style.animation = '', 400);
                 applyColor(val1, parseInt(newValue1));
                 applyColor(val2, parseInt(newValue2));
                 checkVillainImage(parseInt(newValue1));
@@ -175,27 +153,23 @@
         } else {
             element.style.color = 'red';
         }
-    } else if (percent > 75) {
-            element.style.color = 'green';
-        } else if (percent > 50) {
-            element.style.color = 'yellow';
-        } else if (percent > 25) {
-            element.style.color = 'orange';
-        } else {
-            element.style.color = 'red';
-        }
     }
 
     function checkVillainImage(value) {
         const img = document.getElementById('villain-image');
         const newSrc = value >= 3000 ? '/images/image1_alt.jpg' : '/images/image1.jpg';
-        if (img.src.endsWith(newSrc)) return;
-        img.style.transition = 'opacity 0.5s';
-        img.style.opacity = 0.2;
-        setTimeout(() => {
-            img.src = newSrc;
-            img.style.opacity = 1;
-        }, 250);
+        if (!img.src.endsWith(newSrc)) {
+            img.style.transition = 'opacity 0.5s';
+            img.style.opacity = 0.2;
+            setTimeout(() => {
+                img.src = newSrc;
+                img.style.opacity = 1;
+            }, 250);
+        }
+
+        if (value === 0) {
+            launchFireworks();
+        }
     }
 
     function updateButtonStates() {
@@ -218,5 +192,38 @@
         updateButtonStates();
     }, 5000);
 </script>
+<div id="fireworks" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; display: none;"></div>
+<script src="https://cdn.jsdelivr.net/npm/fireworks-js@2.9.2/dist/index.umd.min.js"></script>
+<script>
+    const fireworksContainer = document.getElementById('fireworks');
+    const fireworks = new Fireworks(fireworksContainer, {
+        hue: { min: 0, max: 360 },
+        rocketsPoint: 50,
+        speed: 2,
+        acceleration: 1.05,
+        friction: 0.95,
+        gravity: 1.5,
+        particles: 80,
+        trace: 3,
+        explosion: 5,
+        autoresize: true,
+        brightness: { min: 50, max: 80 },
+        decay: { min: 0.015, max: 0.03 },
+        mouse: { click: false, move: false, max: 1 },
+    });
+
+    function launchFireworks() {
+        const victoryText = document.getElementById('victory-message');
+        fireworksContainer.style.display = 'block';
+        fireworks.start();
+        victoryText.style.display = 'block';
+        setTimeout(() => {
+            fireworks.stop();
+            fireworksContainer.style.display = 'none';
+            victoryText.style.display = 'none';
+        }, 5000);
+    }
+</script>
+<div id="victory-message" style="position: fixed; top: 40%; left: 50%; transform: translate(-50%, -50%); font-size: 64px; font-weight: bold; color: gold; text-shadow: 3px 3px 6px rgba(0,0,0,0.6); z-index: 10000; display: none;">¡VICTORIA!</div>
 </body>
 </html>
