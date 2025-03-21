@@ -49,15 +49,8 @@
             margin-bottom: 30px;
         }
 
-        button {
-            padding: 36px 56px;
-            margin: 14px;
-            font-size: 36px;
-            border: none;
-            border-radius: 14px;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
+        button {$1
+            opacity: 1;
         }
 
         button:disabled {
@@ -89,17 +82,9 @@
             }
 
             button {
-                font-size: 28px;
-                padding: 24px 36px;
-                margin: 10px;
-            }
-
-            h1 {
-                font-size: 36px;
-            }
-
-            h2 {
-                font-size: 26px;
+                font-size: 22px;
+                padding: 16px 24px;
+                margin: 8px;
             }
 
             h1 {
@@ -118,21 +103,6 @@
                 font-size: 24px;
             }
         }
-        button[value="-10"], button[value="10"] {
-            background-color: #e74c3c;
-            color: white;
-        }
-
-        button[value="-5"], button[value="5"] {
-            background-color: #f39c12;
-            color: white;
-        }
-
-        button[value="-1"], button[value="1"] {
-            background-color: #3498db;
-            color: white;
-        }
-
 </style>
 
     <script>
@@ -213,7 +183,7 @@
 
             div2.style.borderColor = color2;
             val2.style.backgroundColor = color2;
-        } 
+        }
 
 function updateButtonStates() {
     const v1 = parseInt(document.getElementById('value1').innerText);
@@ -245,8 +215,8 @@ setInterval(() => {
             <hr id="divider1" style="width: 80%; margin: 16px auto; border: 2px solid #ccc;">
 
             <div id="value1" class="value-box" th:text="${value1}">2240</div>
-            <div class="button-group" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; justify-items: center;">
-                <button onclick="updateValue($1, $2)" value="$2">-10</button>
+            <div class="button-group">
+                <button onclick="updateValue(1, -10)">-10</button>
                 <button onclick="updateValue(1, -5)">-5</button>
                 <button onclick="updateValue(1, -1)">-1</button>
                 <button onclick="updateValue(1, 1)">+1</button>
@@ -260,7 +230,7 @@ setInterval(() => {
             <img src="/images/image2.jpg" class="image" alt="Imagen 2">
             <hr id="divider2" style="width: 80%; margin: 16px auto; border: 2px solid #ccc;">
             <div id="value2" class="value-box" th:text="${value2}">800</div>
-            <div class="button-group" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; justify-items: center;">
+            <div class="button-group">
                 <button onclick="updateValue(2, -10)">-10</button>
                 <button onclick="updateValue(2, -5)">-5</button>
                 <button onclick="updateValue(2, -1)">-1</button>
