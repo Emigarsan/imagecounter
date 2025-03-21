@@ -74,8 +74,34 @@
             .then(response => response.text())
             .then(newValue => {
                 document.getElementById(`value${image}`).innerText = newValue;
+                if (image === 1) checkVillainImage(parseInt(newValue));
             });
         }
+
+        function refreshValuesOnly() {
+            fetch('/')
+                .then(response => response.text())
+                .then(html => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const newValue1 = doc.getElementById('value1').innerText;
+                    const newValue2 = doc.getElementById('value2').innerText;
+                    document.getElementById('value1').innerText = newValue1;
+                    document.getElementById('value2').innerText = newValue2;
+                    checkVillainImage(parseInt(newValue1));
+                });
+        }
+
+        function checkVillainImage(value) {
+            const img = document.getElementById('villain-image');
+            if (value <= 1600) {
+                img.src = '/images/image1_alt.jpg';
+            } else {
+                img.src = '/images/image1.jpg';
+            }
+        }
+
+        setInterval(refreshValuesOnly, 10000); // Refresca solo los valores cada 10 segundos
     </script>
 </head>
 <body>
@@ -83,7 +109,7 @@
         <!-- Imagen 1: Villano -->
         <div>
             <h2>Villano</h2>
-            <img src="/images/image1.jpg" class="image" alt="Imagen 1">
+            <img id="villain-image" src="/images/image1.jpg" class="image" alt="Imagen 1">
             <div id="value1" class="value-box" th:text="${value1}">2240</div>
             <div class="button-group">
                 <button onclick="updateValue(1, -10)">-10</button>
