@@ -1,0 +1,200 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>LMDT</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: url('/images/background.jpg') no-repeat center center fixed;
+            background-size: cover;
+            font-family: sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .overlay {
+            background-color: rgba(255, 255, 255, 0.6);
+            padding: 40px;
+            width: 90%;
+            height: 90vh;
+            border-radius: 16px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            overflow-y: auto;
+        }
+
+        .image {
+            width: 400px;
+            height: auto;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .value-box {
+            font-size: 64px;
+            font-weight: bold;
+            background-color: #f0f0f0;
+            border: 4px solid #ccc;
+            border-radius: 16px;
+            padding: 20px 40px;
+            display: inline-block;
+            margin-bottom: 30px;
+        }
+
+        .button-group {
+            margin-bottom: 40px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        button {
+            font-size: 36px;
+            padding: 20px 32px;
+            border-radius: 12px;
+            border: none;
+            background-color: #3498db;
+            color: white;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+    </style>
+    <script>
+        let gameEnded = false;
+
+        function updateValue(image, amount) {
+            if (gameEnded) return;
+
+            const el = document.getElementById(`value${image}`);
+            const current = parseInt(el.innerText);
+
+            if (image === 1 && (current + amount > 2560 || current + amount < 0)) return;
+            if (image === 2 && (current + amount < 0 || current + amount > 800)) return;
+
+            fetch('/update', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `image=${image}&amount=${amount}`
+            })
+            .then(response => response.text())
+            .then(newValue => {
+                el.innerText = newValue;
+                updateDividers(
+                    parseInt(document.getElementById('value1').innerText),
+                    parseInt(document.getElementById('value2').innerText)
+                );
+                updateButtonStates();
+            });
+        }
+
+        function refreshValuesOnly() {
+            fetch('/display/values')
+                .then(response => response.json())
+                .then(data => {
+                    gameEnded = data.gameEnded;
+                    document.getElementById('value1').innerText = data.value1;
+                    document.getElementById('value2').innerText = data.value2;
+                    document.getElementById('villain-image').src = data.image1;
+                    updateDividers(data.value1, data.value2);
+                    updateButtonStates();
+                });
+        }
+
+        function updateDividers(value1, value2) {
+            const div1 = document.getElementById('divider1');
+            const div2 = document.getElementById('divider2');
+            const val1 = document.getElementById('value1');
+            const val2 = document.getElementById('value2');
+
+            const setColor = (value, max) => {
+                const percent = (value / max) * 100;
+                if (value === 0) return 'gold';
+                if (percent > 75) return 'green';
+                if (percent > 50) return 'yellow';
+                if (percent > 25) return 'orange';
+                return 'red';
+            };
+
+            div1.style.borderColor = setColor(value1, 2560);
+            val1.style.backgroundColor = setColor(value1, 2560);
+            div2.style.borderColor = setColor(value2, 800);
+            val2.style.backgroundColor = setColor(value2, 800);
+        }
+
+        function updateButtonStates() {
+            const v1 = parseInt(document.getElementById('value1').innerText);
+            const v2 = parseInt(document.getElementById('value2').innerText);
+
+            document.querySelectorAll('button[data-image]').forEach(btn => {
+                const image = parseInt(btn.dataset.image);
+                const amount = parseInt(btn.value);
+                const current = image === 1 ? v1 : v2;
+                const newVal = current + amount;
+
+                if (gameEnded) {
+                    btn.disabled = true;
+                } else if (image === 1) {
+                    btn.disabled = newVal < 0 || newVal > 2560;
+                } else {
+                    btn.disabled = newVal < 0 || newVal > 800;
+                }
+            });
+        }
+
+        setInterval(refreshValuesOnly, 5000);
+        window.onload = refreshValuesOnly;
+    </script>
+</head>
+<body>
+<div class="overlay">
+    <h1 style="font-size: 48px; font-weight: bold; text-align: center; color: black;">
+        Operación SHIELD : Código LMDT
+    </h1>
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 40px;">
+        <div style="text-align: center;">
+            <h2 style="font-size: 36px;">Villano</h2>
+            <img id="villain-image" src="/images/image1.jpg" class="image" alt="Imagen 1">
+            <hr id="divider1" style="width: 80%; margin: 16px auto; border: 2px solid #ccc;">
+            <div id="value1" class="value-box" th:text="${value1}">2240</div>
+            <div class="button-group">
+                <button onclick="updateValue(1, -10)" data-image="1" value="-10">-10</button>
+                <button onclick="updateValue(1, -5)" data-image="1" value="-5">-5</button>
+                <button onclick="updateValue(1, -1)" data-image="1" value="-1">-1</button>
+                <button onclick="updateValue(1, 1)" data-image="1" value="1">+1</button>
+                <button onclick="updateValue(1, 5)" data-image="1" value="5">+5</button>
+                <button onclick="updateValue(1, 10)" data-image="1" value="10">+10</button>
+            </div>
+        </div>
+        <div style="text-align: center;">
+            <h2 style="font-size: 36px;">Entrenamiento Especializado</h2>
+            <img src="/images/image2.jpg" class="image" alt="Imagen 2">
+            <hr id="divider2" style="width: 80%; margin: 16px auto; border: 2px solid #ccc;">
+            <div id="value2" class="value-box" th:text="${value2}">800</div>
+            <div class="button-group">
+                <button onclick="updateValue(2, -10)" data-image="2" value="-10">-10</button>
+                <button onclick="updateValue(2, -5)" data-image="2" value="-5">-5</button>
+                <button onclick="updateValue(2, -1)" data-image="2" value="-1">-1</button>
+                <button onclick="updateValue(2, 1)" data-image="2" value="1">+1</button>
+                <button onclick="updateValue(2, 5)" data-image="2" value="5">+5</button>
+                <button onclick="updateValue(2, 10)" data-image="2" value="10">+10</button>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
