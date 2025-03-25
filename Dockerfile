@@ -8,8 +8,8 @@ WORKDIR /app
 COPY target/imagecounter-0.0.1-SNAPSHOT.jar stable-v1.jar
 
 # Expone el puerto en el que corre Spring Boot
-EXPOSE 8080
+EXPOSE 5000
 
 # Ejecuta la aplicación
-CMD ["java", "-Xmx128m", "-Xss512k", "-jar", "app.jar"]
+CMD ["java", "-Xmx128m", "-Xss512k", "-jar", "stable-v1.jar"]
 
