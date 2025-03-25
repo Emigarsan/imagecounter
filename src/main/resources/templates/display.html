@@ -1,4 +1,3 @@
-<!-- display.html con estilo similar a index.html -->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -142,7 +141,7 @@
     <div class="display-row">
         <div class="section">
             <h2>Villano</h2>
-            <img id="villain-image" th:src="${value1 <= 1600} ? '/images/image1_alt.jpg' : '/images/image1.jpg'" class="image" alt="Villano">
+            <img id="villain-image" src="/images/image1.jpg" class="image" alt="Villano">
             <div id="value1" class="value-box" th:text="${value1}">2560</div>
         </div>
         <div class="section">
