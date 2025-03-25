@@ -32,7 +32,7 @@
             display: flex;
             justify-content: space-around;
             align-items: flex-start;
-            flex-wrap: nowrap;
+            flex-wrap: wrap;
             gap: 60px;
         }
 
@@ -41,12 +41,16 @@
             flex-direction: column;
             align-items: center;
             gap: 30px;
-            flex: 1;
         }
 
         .image {
-            width: 100%;
-            max-width: 400px;
+            width: 550px;
+            height: auto;
+            border-radius: 8px;
+        }
+
+        .image-double {
+            width: 1100px;
             height: auto;
             border-radius: 8px;
         }
@@ -86,13 +90,13 @@
         }
 
         .final-screen img {
-            height: 750px;
-            max-height: 90vw;
+            width: 700px;
+            max-width: 90%;
             border-radius: 12px;
         }
 
         .final-message {
-            font-size: 56px;
+            font-size: 48px;
             font-weight: bold;
             color: #2c3e50;
             text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
@@ -115,8 +119,19 @@
                 height: auto;
             }
 
+            .image,
+            .image-double,
+            .final-screen img {
+                width: 100%;
+                height: auto;
+            }
+
             .value-box {
                 font-size: 72px;
+            }
+
+            .display-row {
+                flex-direction: column;
             }
 
             h1 {
@@ -129,15 +144,6 @@
 
             .final-message {
                 font-size: 36px;
-            }
-
-            .display-row {
-                flex-wrap: nowrap;
-                flex-direction: row;
-            }
-
-            .image {
-                max-width: 45vw;
             }
         }
     </style>
@@ -194,7 +200,7 @@
         </div>
         <div class="section">
             <h2>Entrenamiento Especializado</h2>
-            <img src="/images/image2.jpg" class="image" alt="Entrenamiento">
+            <img src="/images/image2.jpg" class="image-double" alt="Entrenamiento">
             <div id="value2" class="value-box" th:text="${value2}">800</div>
         </div>
     </div>

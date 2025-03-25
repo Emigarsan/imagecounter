@@ -5,7 +5,7 @@ FROM eclipse-temurin:17-jdk
 WORKDIR /app
 
 # Copia el archivo JAR de la aplicación (ajusta el nombre si es diferente)
-COPY target/imagecounter-0.0.1-SNAPSHOT.jar app.jar
+COPY target/imagecounter-0.0.1-SNAPSHOT.jar stable-v1.jar
 
 # Expone el puerto en el que corre Spring Boot
 EXPOSE 8080
