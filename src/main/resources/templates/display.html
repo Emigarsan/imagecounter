@@ -44,15 +44,10 @@
         }
 
         .image {
-            width: 550px;
+            width: 45vw;
             height: auto;
             border-radius: 8px;
-        }
-
-        .image-double {
-            width: 1100px;
-            height: auto;
-            border-radius: 8px;
+            max-width: 100%;
         }
 
         .value-box {
@@ -90,7 +85,7 @@
         }
 
         .final-screen img {
-            width: 900px;
+            width: 1200px;
             max-width: 100%;
             border-radius: 12px;
         }
@@ -119,19 +114,8 @@
                 height: auto;
             }
 
-            .image,
-            .image-double,
-            .final-screen img {
-                width: 100%;
-                height: auto;
-            }
-
             .value-box {
                 font-size: 72px;
-            }
-
-            .display-row {
-                flex-direction: column;
             }
 
             h1 {
@@ -200,7 +184,7 @@
         </div>
         <div class="section">
             <h2>Entrenamiento Especializado</h2>
-            <img src="/images/image2.jpg" class="image-double" alt="Entrenamiento">
+            <img src="/images/image2.jpg" class="image" alt="Entrenamiento">
             <div id="value2" class="value-box" th:text="${value2}">800</div>
         </div>
     </div>
