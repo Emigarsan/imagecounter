@@ -141,4 +141,10 @@ public class ImageCounterController {
         data.put("gameEnded", gameEnded);
         return data;
     }
+    // QR
+    @GetMapping("/qr")
+	public String redirectToQr() {
+	return "redirect:/qr.html";
+    }
+
 }
