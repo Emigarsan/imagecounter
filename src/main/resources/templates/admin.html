@@ -124,8 +124,8 @@
 
         <div class="image-toggle-group">
             <h3>Cambiar imagen del villano</h3>
-            <button onclick="setVillainImage('normal')">Imagen Normal</button>
-            <button onclick="setVillainImage('alt')">Imagen Alternativa</button>
+            <button onclick="setVillainImage('normal')">Ciudadano V</button>
+            <button onclick="setVillainImage('alt')">Barón Zemo</button>
             <div id="imageChangeMessage"></div>
         </div>
 
@@ -191,7 +191,7 @@
         .then(response => {
             const msg = document.getElementById('endGameMessage');
             if (response === 'success') {
-                msg.innerText = '🎉 La partida ha sido finalizada';
+                msg.innerText = '🎉 El villano ha sido derrotado';
                 msg.style.color = '#c0392b';
             } else {
                 msg.innerText = 'Error al finalizar la partida';
