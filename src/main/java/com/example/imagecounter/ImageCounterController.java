@@ -14,6 +14,7 @@ public class ImageCounterController {
     private int counter2 = 800;  // Valor inicial entrenamiento
 
     private String villainImageMode = "normal"; // Estado de imagen del villano: "normal" o "alt"
+    private boolean gameEnded = false; // Indica si la partida ha terminado
 
     private final String ADMIN_PASSWORD = System.getenv("ADMIN_PASSWORD");
 
@@ -29,6 +30,8 @@ public class ImageCounterController {
     @PostMapping("/update")
     @ResponseBody
     public String updateCounter(@RequestParam int image, @RequestParam int amount) {
+        if (gameEnded) return "0"; // No se puede modificar si la partida ha terminado
+
         if (image == 1) {
             counter1 = Math.max(0, counter1 + amount);
             return String.valueOf(counter1);
@@ -75,7 +78,7 @@ public class ImageCounterController {
                                       @RequestParam("value2") int newValue2,
                                       HttpSession session) {
         Boolean isAdmin = (Boolean) session.getAttribute("admin");
-        if (isAdmin == null || !isAdmin) {
+        if (isAdmin == null || !isAdmin || gameEnded) {
             return "Unauthorized";
         }
 
@@ -90,7 +93,7 @@ public class ImageCounterController {
     public String setVillainImage(@RequestParam("imageMode") String mode,
                                   HttpSession session) {
         Boolean isAdmin = (Boolean) session.getAttribute("admin");
-        if (isAdmin == null || !isAdmin) {
+        if (isAdmin == null || !isAdmin || gameEnded) {
             return "Unauthorized";
         }
 
@@ -100,6 +103,19 @@ public class ImageCounterController {
         } else {
             return "Invalid mode";
         }
+    }
+
+    // Finalizar partida desde admin
+    @PostMapping("/admin/end-game")
+    @ResponseBody
+    public String endGame(HttpSession session) {
+        Boolean isAdmin = (Boolean) session.getAttribute("admin");
+        if (isAdmin == null || !isAdmin) {
+            return "Unauthorized";
+        }
+
+        this.gameEnded = true;
+        return "success";
     }
 
     // Visualización para pantalla grande
@@ -122,6 +138,7 @@ public class ImageCounterController {
             imagePath = "/images/image1_alt.jpg";
         }
         data.put("image1", imagePath);
+        data.put("gameEnded", gameEnded);
         return data;
     }
 }
