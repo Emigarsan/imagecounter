@@ -32,7 +32,7 @@
             display: flex;
             justify-content: space-around;
             align-items: flex-start;
-            flex-wrap: wrap;
+            flex-wrap: nowrap;
             gap: 60px;
         }
 
@@ -41,13 +41,14 @@
             flex-direction: column;
             align-items: center;
             gap: 30px;
+            flex: 1;
         }
 
         .image {
-            width: 45vw;
+            width: 100%;
+            max-width: 400px;
             height: auto;
             border-radius: 8px;
-            max-width: 100%;
         }
 
         .value-box {
@@ -86,7 +87,7 @@
 
         .final-screen img {
             width: 1200px;
-            max-width: 100%;
+            max-width: 90vw;
             border-radius: 12px;
         }
 
@@ -128,6 +129,15 @@
 
             .final-message {
                 font-size: 36px;
+            }
+
+            .display-row {
+                flex-wrap: nowrap;
+                flex-direction: row;
+            }
+
+            .image {
+                max-width: 45vw;
             }
         }
     </style>
