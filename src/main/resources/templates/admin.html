@@ -1,4 +1,3 @@
-<!-- admin.html con estilo similar a index.html con popup personalizado -->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -70,6 +69,37 @@
             display: none;
             z-index: 1000;
         }
+
+        .image-toggle-group {
+            margin-top: 40px;
+        }
+
+        .image-toggle-group h3 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .image-toggle-group button {
+            margin: 10px 10px 0 10px;
+            padding: 10px 20px;
+            font-size: 20px;
+        }
+
+        #imageChangeMessage,
+        #endGameMessage {
+            margin-top: 15px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .end-button {
+            background-color: #c0392b;
+            margin-top: 30px;
+        }
+
+        .end-button:hover {
+            background-color: #a93226;
+        }
     </style>
 </head>
 <body>
@@ -91,6 +121,19 @@
             <input type="number" id="value2" placeholder="Valor Entrenamiento" th:value="${value2}" required><br>
             <button onclick="updateValues()">Actualizar</button>
         </div>
+
+        <div class="image-toggle-group">
+            <h3>Cambiar imagen del villano</h3>
+            <button onclick="setVillainImage('normal')">Ciudadano V</button>
+            <button onclick="setVillainImage('alt')">Barón Zemo</button>
+            <div id="imageChangeMessage"></div>
+        </div>
+
+        <div class="image-toggle-group">
+            <h3>Finalizar Partida</h3>
+            <button onclick="endGame()" class="end-button">Finalizar</button>
+            <div id="endGameMessage"></div>
+        </div>
     </div>
 </div>
 
@@ -103,9 +146,7 @@
 
         fetch('/admin/update', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: `value1=${v1}&value2=${v2}`
         })
         .then(res => res.text())
@@ -119,6 +160,42 @@
                 }, 2000);
             } else {
                 alert('Error al actualizar los valores');
+            }
+        });
+    }
+
+    function setVillainImage(mode) {
+        fetch('/admin/set-image', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `imageMode=${mode}`
+        })
+        .then(res => res.text())
+        .then(response => {
+            const msgDiv = document.getElementById('imageChangeMessage');
+            if (response === 'success') {
+                msgDiv.innerText = `Imagen del villano cambiada a: ${mode === 'normal' ? 'Normal' : 'Alternativa'}`;
+                msgDiv.style.color = '#2ecc71';
+            } else {
+                msgDiv.innerText = 'Error al cambiar la imagen';
+                msgDiv.style.color = 'red';
+            }
+        });
+    }
+
+    function endGame() {
+        fetch('/admin/end-game', {
+            method: 'POST'
+        })
+        .then(res => res.text())
+        .then(response => {
+            const msg = document.getElementById('endGameMessage');
+            if (response === 'success') {
+                msg.innerText = '🎉 El villano ha sido derrotado';
+                msg.style.color = '#c0392b';
+            } else {
+                msg.innerText = 'Error al finalizar la partida';
+                msg.style.color = 'red';
             }
         });
     }

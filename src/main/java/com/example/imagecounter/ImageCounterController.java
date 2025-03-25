@@ -7,12 +7,14 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.Map;
 
-
 @Controller
 public class ImageCounterController {
 
     private int counter1 = 2560; // Valor inicial villano
     private int counter2 = 800;  // Valor inicial entrenamiento
+
+    private String villainImageMode = "normal"; // Estado de imagen del villano: "normal" o "alt"
+    private boolean gameEnded = false; // Indica si la partida ha terminado
 
     private final String ADMIN_PASSWORD = System.getenv("ADMIN_PASSWORD");
 
@@ -28,6 +30,8 @@ public class ImageCounterController {
     @PostMapping("/update")
     @ResponseBody
     public String updateCounter(@RequestParam int image, @RequestParam int amount) {
+        if (gameEnded) return "0"; // No se puede modificar si la partida ha terminado
+
         if (image == 1) {
             counter1 = Math.max(0, counter1 + amount);
             return String.valueOf(counter1);
@@ -44,8 +48,8 @@ public class ImageCounterController {
         Boolean isAdmin = (Boolean) session.getAttribute("admin");
         if (isAdmin != null && isAdmin) {
             model.addAttribute("loggedIn", true);
-            model.addAttribute("counter1", counter1);
-            model.addAttribute("counter2", counter2);
+            model.addAttribute("value1", counter1);
+            model.addAttribute("value2", counter2);
         } else {
             model.addAttribute("notLoggedIn", true);
         }
@@ -67,21 +71,52 @@ public class ImageCounterController {
         }
     }
 
+    // Actualización de contadores desde admin
     @PostMapping("/admin/update")
-        @ResponseBody
-        public String updateCountersAdmin(@RequestParam("value1") int newValue1,
-                                        @RequestParam("value2") int newValue2,
-                                        HttpSession session) {
-            Boolean isAdmin = (Boolean) session.getAttribute("admin");
-            if (isAdmin == null || !isAdmin) {
-                return "Unauthorized";
-            }
-
-            this.counter1 = newValue1;
-            this.counter2 = newValue2;
-            return "success";
+    @ResponseBody
+    public String updateCountersAdmin(@RequestParam("value1") int newValue1,
+                                      @RequestParam("value2") int newValue2,
+                                      HttpSession session) {
+        Boolean isAdmin = (Boolean) session.getAttribute("admin");
+        if (isAdmin == null || !isAdmin || gameEnded) {
+            return "Unauthorized";
         }
 
+        this.counter1 = newValue1;
+        this.counter2 = newValue2;
+        return "success";
+    }
+
+    // Cambiar modo de imagen del villano desde admin
+    @PostMapping("/admin/set-image")
+    @ResponseBody
+    public String setVillainImage(@RequestParam("imageMode") String mode,
+                                  HttpSession session) {
+        Boolean isAdmin = (Boolean) session.getAttribute("admin");
+        if (isAdmin == null || !isAdmin || gameEnded) {
+            return "Unauthorized";
+        }
+
+        if (mode.equals("normal") || mode.equals("alt")) {
+            villainImageMode = mode;
+            return "success";
+        } else {
+            return "Invalid mode";
+        }
+    }
+
+    // Finalizar partida desde admin
+    @PostMapping("/admin/end-game")
+    @ResponseBody
+    public String endGame(HttpSession session) {
+        Boolean isAdmin = (Boolean) session.getAttribute("admin");
+        if (isAdmin == null || !isAdmin) {
+            return "Unauthorized";
+        }
+
+        this.gameEnded = true;
+        return "success";
+    }
 
     // Visualización para pantalla grande
     @GetMapping("/display")
@@ -90,14 +125,20 @@ public class ImageCounterController {
         model.addAttribute("value2", counter2);
         return "display";
     }
-    @GetMapping("/display/values")
-        @ResponseBody
-        public Map<String, Object> getDisplayValues() {
-            Map<String, Object> data = new HashMap<>();
-            data.put("value1", counter1);
-            data.put("value2", counter2);
-            data.put("image1", counter1 <= 1600 ? "/images/image1_alt.jpg" : "/images/image1.jpg");
-            return data;
-        }
 
+    // Valores actuales para display y cliente
+    @GetMapping("/display/values")
+    @ResponseBody
+    public Map<String, Object> getDisplayValues() {
+        Map<String, Object> data = new HashMap<>();
+        data.put("value1", counter1);
+        data.put("value2", counter2);
+        String imagePath = "/images/image1.jpg";
+        if ("alt".equals(villainImageMode)) {
+            imagePath = "/images/image1_alt.jpg";
+        }
+        data.put("image1", imagePath);
+        data.put("gameEnded", gameEnded);
+        return data;
+    }
 }
