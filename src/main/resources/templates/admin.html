@@ -1,4 +1,3 @@
-<!-- admin.html con estilo original + botón para cambiar imagen del villano -->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -85,6 +84,13 @@
             padding: 10px 20px;
             font-size: 20px;
         }
+
+        #imageChangeMessage {
+            margin-top: 15px;
+            font-size: 18px;
+            color: #2c3e50;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -109,8 +115,9 @@
 
         <div class="image-toggle-group">
             <h3>Cambiar imagen del villano</h3>
-            <button onclick="setVillainImage('normal')">Ciudadano V</button>
-            <button onclick="setVillainImage('alt')">Barón Zemo</button>
+            <button onclick="setVillainImage('normal')">Imagen Normal</button>
+            <button onclick="setVillainImage('alt')">Imagen Alternativa</button>
+            <div id="imageChangeMessage"></div>
         </div>
     </div>
 </div>
@@ -154,10 +161,13 @@
         })
         .then(res => res.text())
         .then(response => {
+            const msgDiv = document.getElementById('imageChangeMessage');
             if (response === 'success') {
-                alert('Imagen del villano cambiada a: ' + mode);
+                msgDiv.innerText = `Imagen del villano cambiada a: ${mode === 'normal' ? 'Normal' : 'Alternativa'}`;
+                msgDiv.style.color = '#2ecc71';
             } else {
-                alert('Error al cambiar imagen');
+                msgDiv.innerText = 'Error al cambiar la imagen';
+                msgDiv.style.color = 'red';
             }
         });
     }
