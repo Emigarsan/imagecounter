@@ -85,11 +85,20 @@
             font-size: 20px;
         }
 
-        #imageChangeMessage {
+        #imageChangeMessage,
+        #endGameMessage {
             margin-top: 15px;
             font-size: 18px;
-            color: #2c3e50;
             font-weight: bold;
+        }
+
+        .end-button {
+            background-color: #c0392b;
+            margin-top: 30px;
+        }
+
+        .end-button:hover {
+            background-color: #a93226;
         }
     </style>
 </head>
@@ -119,6 +128,12 @@
             <button onclick="setVillainImage('alt')">Imagen Alternativa</button>
             <div id="imageChangeMessage"></div>
         </div>
+
+        <div class="image-toggle-group">
+            <h3>Finalizar Partida</h3>
+            <button onclick="endGame()" class="end-button">Finalizar</button>
+            <div id="endGameMessage"></div>
+        </div>
     </div>
 </div>
 
@@ -131,9 +146,7 @@
 
         fetch('/admin/update', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: `value1=${v1}&value2=${v2}`
         })
         .then(res => res.text())
@@ -154,9 +167,7 @@
     function setVillainImage(mode) {
         fetch('/admin/set-image', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: `imageMode=${mode}`
         })
         .then(res => res.text())
@@ -168,6 +179,23 @@
             } else {
                 msgDiv.innerText = 'Error al cambiar la imagen';
                 msgDiv.style.color = 'red';
+            }
+        });
+    }
+
+    function endGame() {
+        fetch('/admin/end-game', {
+            method: 'POST'
+        })
+        .then(res => res.text())
+        .then(response => {
+            const msg = document.getElementById('endGameMessage');
+            if (response === 'success') {
+                msg.innerText = '🎉 La partida ha sido finalizada';
+                msg.style.color = '#c0392b';
+            } else {
+                msg.innerText = 'Error al finalizar la partida';
+                msg.style.color = 'red';
             }
         });
     }
