@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Panel de Administración</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: url('/images/background.jpg') no-repeat center center fixed;
+            background-size: cover;
+            font-family: sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .overlay {
+            background-color: rgba(255, 255, 255, 0.6);
+            padding: 40px;
+            width: 90%;
+            max-width: 600px;
+            border-radius: 16px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        h2 {
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+
+        input[type="password"], input[type="number"] {
+            font-size: 24px;
+            padding: 10px;
+            width: 80%;
+            margin: 10px 0;
+            border-radius: 8px;
+            border: 2px solid #ccc;
+        }
+
+        button {
+            font-size: 24px;
+            padding: 12px 24px;
+            border-radius: 12px;
+            border: none;
+            background-color: #3498db;
+            color: white;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #2ecc71;
+            color: white;
+            padding: 20px 40px;
+            border-radius: 16px;
+            font-size: 24px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.3);
+            display: none;
+            z-index: 1000;
+        }
+
+        .image-toggle-group {
+            margin-top: 40px;
+        }
+
+        .image-toggle-group h3 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .image-toggle-group button {
+            margin: 10px 10px 0 10px;
+            padding: 10px 20px;
+            font-size: 20px;
+        }
+
+        #imageChangeMessage,
+        #endGameMessage {
+            margin-top: 15px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .end-button {
+            background-color: #c0392b;
+            margin-top: 30px;
+        }
+
+        .end-button:hover {
+            background-color: #a93226;
+        }
+    </style>
+</head>
+<body>
+<div class="overlay">
+    <h2>Panel de Administración</h2>
+
+    <div th:if="${notLoggedIn}">
+        <form method="post" action="/admin/login">
+            <input type="password" id="password" name="password" placeholder="Contraseña" required>
+            <br>
+            <button type="submit">Ingresar</button>
+        </form>
+        <p th:if="${loginFailed}" style="color: red;">Contraseña incorrecta.</p>
+    </div>
+
+    <div th:if="${loggedIn}">
+        <div>
+            <input type="number" id="value1" placeholder="Valor Villano" th:value="${value1}" required><br>
+            <input type="number" id="value2" placeholder="Valor Entrenamiento" th:value="${value2}" required><br>
+            <button onclick="updateValues()">Actualizar</button>
+        </div>
+
+        <div class="image-toggle-group">
+            <h3>Cambiar imagen del villano</h3>
+            <button onclick="setVillainImage('normal')">Ciudadano V</button>
+            <button onclick="setVillainImage('alt')">Barón Zemo</button>
+            <div id="imageChangeMessage"></div>
+        </div>
+
+        <div class="image-toggle-group">
+            <h3>Finalizar Partida</h3>
+            <button onclick="endGame()" class="end-button">Finalizar</button>
+            <div id="endGameMessage"></div>
+        </div>
+    </div>
+</div>
+
+<div id="successPopup" class="popup">Los valores fueron actualizados</div>
+
+<script>
+    function updateValues() {
+        const v1 = document.getElementById('value1').value;
+        const v2 = document.getElementById('value2').value;
+
+        fetch('/admin/update', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `value1=${v1}&value2=${v2}`
+        })
+        .then(res => res.text())
+        .then(response => {
+            if (response === 'success') {
+                const popup = document.getElementById('successPopup');
+                popup.style.display = 'block';
+                setTimeout(() => {
+                    popup.style.display = 'none';
+                    location.reload();
+                }, 2000);
+            } else {
+                alert('Error al actualizar los valores');
+            }
+        });
+    }
+
+    function setVillainImage(mode) {
+        fetch('/admin/set-image', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `imageMode=${mode}`
+        })
+        .then(res => res.text())
+        .then(response => {
+            const msgDiv = document.getElementById('imageChangeMessage');
+            if (response === 'success') {
+                msgDiv.innerText = `Imagen del villano cambiada a: ${mode === 'normal' ? 'Normal' : 'Alternativa'}`;
+                msgDiv.style.color = '#2ecc71';
+            } else {
+                msgDiv.innerText = 'Error al cambiar la imagen';
+                msgDiv.style.color = 'red';
+            }
+        });
+    }
+
+    function endGame() {
+        fetch('/admin/end-game', {
+            method: 'POST'
+        })
+        .then(res => res.text())
+        .then(response => {
+            const msg = document.getElementById('endGameMessage');
+            if (response === 'success') {
+                msg.innerText = '🎉 El villano ha sido derrotado';
+                msg.style.color = '#c0392b';
+            } else {
+                msg.innerText = 'Error al finalizar la partida';
+                msg.style.color = 'red';
+            }
+        });
+    }
+</script>
+</body>
+</html>
