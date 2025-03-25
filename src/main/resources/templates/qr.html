@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Código QR - LMDT</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: url('/images/background.jpg') no-repeat center center fixed;
+            background-size: cover;
+            font-family: sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: rgba(255, 255, 255, 0.7);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 36px;
+            margin-bottom: 30px;
+            color: #2c3e50;
+        }
+
+        .qr-image {
+            width: 300px;
+            max-width: 90%;
+            border-radius: 12px;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 28px;
+            }
+
+            .qr-image {
+                width: 80%;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Escanea para acceder a la app</h1>
+    <img src="/images/qr_app.png" alt="Código QR" class="qr-image">
+</div>
+</body>
+</html>
+
