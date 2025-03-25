@@ -15,7 +15,7 @@
             align-items: center;
             height: 100vh;
         }
-    
+
         .overlay {
             background-color: rgba(255, 255, 255, 0.6);
             padding: 40px;
@@ -26,14 +26,14 @@
             text-align: center;
             overflow-y: auto;
         }
-    
+
         .image {
             width: 400px;
             height: auto;
             border-radius: 8px;
             margin-bottom: 10px;
         }
-    
+
         .value-box {
             font-size: 64px;
             font-weight: bold;
@@ -44,7 +44,7 @@
             display: inline-block;
             margin-bottom: 30px;
         }
-    
+
         .button-group {
             margin-bottom: 40px;
             display: flex;
@@ -52,7 +52,7 @@
             justify-content: center;
             gap: 20px;
         }
-    
+
         button {
             font-size: 36px;
             padding: 20px 32px;
@@ -63,48 +63,48 @@
             font-weight: bold;
             transition: background-color 0.3s ease;
         }
-    
+
         button:hover {
             background-color: #2980b9;
         }
-    
+
         button:disabled {
             opacity: 0.5;
             cursor: not-allowed;
         }
-    
+
         @media (max-width: 768px) {
             .overlay {
                 padding: 20px;
                 width: 95%;
                 height: auto;
             }
-    
+
             .image {
                 width: 100%;
                 height: auto;
             }
-    
+
             .value-box {
                 font-size: 48px;
                 padding: 16px 30px;
             }
-    
+
             button {
                 font-size: 28px;
                 padding: 18px 24px;
             }
-    
+
             h1 {
                 font-size: 32px;
             }
-    
+
             h2 {
                 font-size: 24px;
             }
         }
     </style>
-    
+
     <script>
         window.villainLocked = false;
 
@@ -112,16 +112,8 @@
             const el = document.getElementById(`value${image}`);
             const current = parseInt(el.innerText);
 
-            if (image === 1) {
-                // Verificamos límites: valor entre 0 y 2560, y no se puede subir por encima de 1600 si se está debajo
-                if (current + amount > 2560 || current + amount < 0) return;
-                if (current < 1600 && amount > 0 && current + amount > 1600) return;
-                if (current === 1600 && amount > 0) return;
-            }
-
-            if (image === 2 && (current + amount < 0 || current + amount > 800)) {
-                return;
-            }
+            if (image === 1 && (current + amount > 2560 || current + amount < 0)) return;
+            if (image === 2 && (current + amount < 0 || current + amount > 800)) return;
 
             fetch('/update', {
                 method: 'POST',
@@ -131,7 +123,6 @@
             .then(response => response.text())
             .then(newValue => {
                 el.innerText = newValue;
-                if (image === 1) checkVillainImage(parseInt(newValue));
                 updateDividers(
                     parseInt(document.getElementById('value1').innerText),
                     parseInt(document.getElementById('value2').innerText)
@@ -150,20 +141,9 @@
                     const newValue2 = doc.getElementById('value2').innerText;
                     document.getElementById('value1').innerText = newValue1;
                     document.getElementById('value2').innerText = newValue2;
-                    checkVillainImage(parseInt(newValue1));
                     updateDividers(parseInt(newValue1), parseInt(newValue2));
                     updateButtonStates();
                 });
-        }
-
-        function checkVillainImage(value) {
-            const img = document.getElementById('villain-image');
-            if (value <= 1600) {
-                img.src = '/images/image1_alt.jpg';
-                window.villainLocked = true;
-            } else {
-                img.src = '/images/image1.jpg';
-            }
         }
 
         function updateDividers(value1, value2) {
@@ -198,16 +178,7 @@
             document.querySelectorAll('[onclick^="updateValue(1,"]').forEach(btn => {
                 const val = parseInt(btn.innerText.replace('+', ''));
                 const newVal = v1 + val;
-
-                if (newVal < 0 || newVal > 2560) {
-                    btn.disabled = true;
-                } else if (v1 < 1600 && newVal > 1600) {
-                    btn.disabled = true;
-                } else if (v1 === 1600 && val > 0) {
-                    btn.disabled = true;
-                } else {
-                    btn.disabled = false;
-                }
+                btn.disabled = newVal < 0 || newVal > 2560;
             });
 
             document.querySelectorAll('[onclick^="updateValue(2,"]').forEach(btn => {
