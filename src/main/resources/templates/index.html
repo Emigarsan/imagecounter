@@ -106,9 +106,11 @@
     </style>
 
     <script>
-        window.villainLocked = false;
+        let gameEnded = false;
 
         function updateValue(image, amount) {
+            if (gameEnded) return;
+
             const el = document.getElementById(`value${image}`);
             const current = parseInt(el.innerText);
 
@@ -135,9 +137,12 @@
             fetch('/display/values')
                 .then(response => response.json())
                 .then(data => {
+                    gameEnded = data.gameEnded;
+
                     document.getElementById('value1').innerText = data.value1;
                     document.getElementById('value2').innerText = data.value2;
                     document.getElementById('villain-image').src = data.image1;
+
                     updateDividers(data.value1, data.value2);
                     updateButtonStates();
                 });
@@ -169,25 +174,27 @@
         }
 
         function updateButtonStates() {
-            const v1 = parseInt(document.getElementById('value1').innerText);
-            const v2 = parseInt(document.getElementById('value2').innerText);
+            const disable = gameEnded;
 
-            document.querySelectorAll('[onclick^="updateValue(1,"]').forEach(btn => {
-                const val = parseInt(btn.innerText.replace('+', ''));
-                const newVal = v1 + val;
-                btn.disabled = newVal < 0 || newVal > 2560;
-            });
-
-            document.querySelectorAll('[onclick^="updateValue(2,"]').forEach(btn => {
-                const val = parseInt(btn.innerText.replace('+', ''));
-                const newVal = v2 + val;
-                btn.disabled = newVal < 0 || newVal > 800;
+            document.querySelectorAll('[onclick^="updateValue("]').forEach(btn => {
+                if (disable) {
+                    btn.disabled = true;
+                } else {
+                    const image = btn.getAttribute('onclick').includes('1') ? 1 : 2;
+                    const val = parseInt(btn.innerText.replace('+', ''));
+                    const current = parseInt(document.getElementById(`value${image}`).innerText);
+                    const newVal = current + val;
+                    if (image === 1) {
+                        btn.disabled = newVal < 0 || newVal > 2560;
+                    } else {
+                        btn.disabled = newVal < 0 || newVal > 800;
+                    }
+                }
             });
         }
 
-        setInterval(() => {
-            refreshValuesOnly();
-        }, 3000);
+        setInterval(refreshValuesOnly, 3000);
+        window.onload = refreshValuesOnly;
     </script>
 </head>
 <body>
