@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -17,7 +18,7 @@
         }
 
         .overlay {
-            background-color: rgba(255, 255, 255, 0.6);
+            background-color: rgba(255, 255, 255, 0.4);
             padding: 40px;
             width: 95%;
             height: 90vh;
@@ -30,7 +31,7 @@
 
         .display-row {
             display: flex;
-            justify-content: space-around;
+            justify-content: center;
             align-items: flex-start;
             flex-wrap: wrap;
             gap: 60px;
@@ -41,18 +42,19 @@
             flex-direction: column;
             align-items: center;
             gap: 30px;
+            flex: 1;
         }
 
         .image {
-            width: 550px;
+            width: 80%;
+            max-width: 400px;
             height: auto;
             border-radius: 8px;
         }
 
-        .image-double {
-            width: 1100px;
-            height: auto;
-            border-radius: 8px;
+        .image-larger {
+	    width: 100%;
+            max-width: 700px;
         }
 
         .value-box {
@@ -63,10 +65,6 @@
             border-radius: 16px;
             padding: 20px 40px;
             display: inline-block;
-        }
-
-        .fade-out {
-            display: none;
         }
 
         .fade-in {
@@ -90,13 +88,13 @@
         }
 
         .final-screen img {
-            width: 700px;
-            max-width: 90%;
+            height: 750px;
+            max-height: 90vw;
             border-radius: 12px;
         }
 
         .final-message {
-            font-size: 48px;
+            font-size: 56px;
             font-weight: bold;
             color: #2c3e50;
             text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
@@ -119,19 +117,8 @@
                 height: auto;
             }
 
-            .image,
-            .image-double,
-            .final-screen img {
-                width: 100%;
-                height: auto;
-            }
-
             .value-box {
                 font-size: 72px;
-            }
-
-            .display-row {
-                flex-direction: column;
             }
 
             h1 {
@@ -144,6 +131,14 @@
 
             .final-message {
                 font-size: 36px;
+            }
+
+            .image {
+                max-width: 90vw;
+            }
+
+            .image-larger {
+                max-width: 95vw;
             }
         }
     </style>
@@ -200,7 +195,7 @@
         </div>
         <div class="section">
             <h2>Entrenamiento Especializado</h2>
-            <img src="/images/image2.jpg" class="image-double" alt="Entrenamiento">
+            <img src="/images/image2.jpg" class="image image-larger" alt="Entrenamiento">
             <div id="value2" class="value-box" th:text="${value2}">800</div>
         </div>
     </div>
